@@ -6,7 +6,7 @@ export function createEmotionCache() {
   let insertionPoint;
 
   if (isBrowser) {
-    const emotionInsertionPoint = document.querySelector(
+    const emotionInsertionPoint = document.querySelector<HTMLElement>(
       'meta[name="emotion-insertion-point"]'
     );
     insertionPoint = emotionInsertionPoint ?? undefined;

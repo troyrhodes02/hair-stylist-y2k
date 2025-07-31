@@ -3,6 +3,34 @@
 import { Box, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
+import { AnimatedStars } from '..';
+
+const Subtitle = styled(Typography)(({ theme }) => ({
+  color: theme.palette.y2k.foreground,
+  fontWeight: 500,
+  letterSpacing: '0.2em',
+  textTransform: 'uppercase',
+  fontSize: '1rem',
+  opacity: 0.8,
+  marginBottom: theme.spacing(2),
+}));
+
+const MainTitle = styled(Typography)(({ theme }) => ({
+  fontFamily: '"Playfair Display", serif',
+  fontWeight: 'bold',
+  color: theme.palette.y2k.primary,
+  fontSize: 'clamp(4rem, 12vw, 8rem)',
+  lineHeight: 1.1,
+  position: 'relative',
+  display: 'inline-block',
+  '& .style-text': {
+    fontStyle: 'italic',
+    color: theme.palette.y2k.secondary,
+    display: 'block',
+    fontSize: '0.6em',
+    marginTop: '-0.2em',
+  },
+}));
 
 const PolaroidCard = styled(Box)(({ theme }) => ({
   backgroundColor: '#2D0F1F',
@@ -188,85 +216,37 @@ export const HeroSection = () => {
         overflow: 'visible',
       }}
     >
+      <AnimatedStars />
       <Container maxWidth='lg' sx={{ position: 'relative', zIndex: 2 }}>
         {/* Title Section */}
         <Box
           sx={{
             textAlign: 'center',
-            mb: { xs: 2, md: 8 },
-            px: { xs: 2, md: 0 },
+            mb: { xs: 8, md: 12 },
+            position: 'relative',
+            px: 2,
           }}
         >
+          <Subtitle variant='h3'>Welcome to the Swag Site</Subtitle>
+
+          <MainTitle variant='h1'>
+            Kel.C.
+            <span className='style-text'>Styles</span>
+          </MainTitle>
+
           <Typography
-            variant='h2'
             sx={{
-              fontSize: { xs: '2rem', md: '3.75rem' },
-              fontWeight: 'bold',
               color: 'y2k.foreground',
-              mb: { xs: 1, md: 2 },
+              maxWidth: '600px',
+              mx: 'auto',
+              mt: 4,
+              fontSize: '1.1rem',
+              opacity: 0.9,
+              fontStyle: 'italic',
             }}
           >
-            WELCOME TO OUR
+            Your one-stop destination for professional styling and swag results!
           </Typography>
-
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: { xs: 1, md: 2 },
-              mb: { xs: 2, md: 2 },
-              flexWrap: 'wrap',
-            }}
-          >
-            <Typography
-              variant='h3'
-              sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}
-            >
-              🤍
-            </Typography>
-            <Typography
-              variant='h3'
-              sx={{
-                fontSize: { xs: '1.5rem', md: '3rem' },
-                fontWeight: 'bold',
-                color: 'y2k.primary',
-              }}
-            >
-              SWAG SITE
-            </Typography>
-            <Typography
-              variant='h3'
-              sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}
-            >
-              🤍
-            </Typography>
-          </Box>
-
-          <Box sx={{ mb: { xs: 2, md: 4 } }}>
-            <Typography
-              variant='h1'
-              sx={{
-                fontSize: { xs: '3rem', md: '6rem' },
-                fontWeight: 'bold',
-                color: 'y2k.foreground',
-                lineHeight: 1.1,
-              }}
-            >
-              KEL.C.
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: '"Playfair Display", serif',
-                fontStyle: 'italic',
-                fontSize: { xs: '1.75rem', md: '3.75rem' },
-                color: 'y2k.secondary',
-                mt: 1,
-              }}
-            >
-              Styles
-            </Typography>
-          </Box>
         </Box>
 
         {/* Mobile Cards */}

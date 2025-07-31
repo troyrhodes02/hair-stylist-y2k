@@ -6,26 +6,14 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CloseIcon from '@mui/icons-material/Close';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { AnimatedStars } from '..';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 `;
 
-const starPositions = [
-  { left: '15%', top: '10%', delay: '0s', size: '20px' },
-  { left: '35%', top: '85%', delay: '0.5s', size: '24px' },
-  { left: '55%', top: '15%', delay: '1s', size: '22px' },
-  { left: '75%', top: '75%', delay: '1.5s', size: '18px' },
-  { left: '85%', top: '25%', delay: '2s', size: '26px' },
-  { left: '25%', top: '65%', delay: '2.5s', size: '20px' },
-  { left: '45%', top: '35%', delay: '3s', size: '24px' },
-  { left: '65%', top: '90%', delay: '3.5s', size: '22px' },
-  { left: '90%', top: '45%', delay: '4s', size: '20px' },
-  { left: '10%', top: '55%', delay: '4.5s', size: '18px' },
-];
-
-const StyledContainer = styled(Container)(({ theme }) => ({
+const PoliciesContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   zIndex: 10,
   paddingTop: theme.spacing(3),
@@ -103,148 +91,115 @@ const policies = [
 
 export const BookingPoliciesSection = () => {
   return (
-    <Box
-      component='section'
-      sx={{
-        position: 'relative',
-        overflow: 'hidden',
-        py: { xs: 2, md: 4 },
-      }}
-    >
-      {/* Animated Stars Background */}
-      <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 0,
-          overflow: 'hidden',
-        }}
-      >
-        {starPositions.map((pos, i) => (
+    <Box component='section' id='policies'>
+      <PoliciesContainer>
+        <AnimatedStars />
+        <Container maxWidth='lg'>
+          {/* Section Header */}
           <Box
-            key={i}
             sx={{
-              position: 'absolute',
-              color: 'y2k.primary',
-              opacity: 0.2,
-              animation: `${float} 3s ease-in-out infinite`,
-              animationDelay: pos.delay,
-              left: pos.left,
-              top: pos.top,
-              fontSize: pos.size,
-              zIndex: 0,
+              textAlign: 'center',
+              mb: { xs: 6, md: 8 }, // Increased bottom margin
+              position: 'relative',
+              zIndex: 1,
             }}
           >
-            ★
-          </Box>
-        ))}
-      </Box>
-
-      <StyledContainer>
-        {/* Section Header */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            mb: { xs: 6, md: 8 }, // Increased bottom margin
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          <Box sx={{ position: 'relative', display: 'inline-block' }}>
-            <PolicyTitle variant='h2'>Booking</PolicyTitle>
-            <Typography
-              variant='h2'
-              sx={{
-                fontSize: { xs: '2.5rem', md: '4.5rem' },
-                fontWeight: 'bold',
-                color: 'y2k.foreground',
-                textTransform: 'uppercase',
-                lineHeight: 1,
-              }}
-            >
-              POLICIES
-            </Typography>
-            <Box
-              sx={{
-                position: 'absolute',
-                top: -16,
-                right: -32,
-                animation: `${float} 3s ease-in-out infinite`,
-                color: 'white',
-                fontSize: '2rem',
-                zIndex: 1,
-              }}
-            >
-              🤍
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Policies Grid */}
-        <Box
-          sx={{
-            position: 'relative',
-            zIndex: 1,
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, 1fr)',
-              lg: 'repeat(4, 1fr)',
-            },
-            gap: { xs: 2, md: 3 },
-            maxWidth: '1400px',
-            mx: 'auto',
-          }}
-        >
-          {policies.map(policy => (
-            <Box
-              key={policy.title}
-              className='policy-card'
-              sx={{
-                textAlign: 'center',
-                transform: 'translateY(0)',
-                transition: 'transform 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                '&:hover': {
-                  transform: 'scale(1.05)',
-                },
-              }}
-            >
-              <IconCircle>
-                <policy.icon />
-              </IconCircle>
-
+            <Box sx={{ position: 'relative', display: 'inline-block' }}>
+              <PolicyTitle variant='h2'>Booking</PolicyTitle>
               <Typography
-                variant='h3'
+                variant='h2'
                 sx={{
-                  fontSize: { xs: '1.25rem', md: '1.5rem' },
+                  fontSize: { xs: '2.5rem', md: '4.5rem' },
                   fontWeight: 'bold',
                   color: 'y2k.foreground',
-                  mb: 1,
                   textTransform: 'uppercase',
-                  width: '100%',
+                  lineHeight: 1,
                 }}
               >
-                {policy.title}
+                POLICIES
               </Typography>
-
-              <Typography
+              <Box
                 sx={{
-                  color: 'y2k.foreground',
-                  opacity: 0.9,
-                  fontSize: '0.875rem',
-                  lineHeight: 1.4,
-                  maxWidth: '90%',
+                  position: 'absolute',
+                  top: -16,
+                  right: -32,
+                  animation: `${float} 3s ease-in-out infinite`,
+                  color: 'white',
+                  fontSize: '2rem',
+                  zIndex: 1,
                 }}
               >
-                {policy.description}
-              </Typography>
+                🤍
+              </Box>
             </Box>
-          ))}
-        </Box>
-      </StyledContainer>
+          </Box>
+
+          {/* Policies Grid */}
+          <Box
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              },
+              gap: { xs: 2, md: 3 },
+              maxWidth: '1400px',
+              mx: 'auto',
+            }}
+          >
+            {policies.map(policy => (
+              <Box
+                key={policy.title}
+                className='policy-card'
+                sx={{
+                  textAlign: 'center',
+                  transform: 'translateY(0)',
+                  transition: 'transform 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              >
+                <IconCircle>
+                  <policy.icon />
+                </IconCircle>
+
+                <Typography
+                  variant='h3'
+                  sx={{
+                    fontSize: { xs: '1.25rem', md: '1.5rem' },
+                    fontWeight: 'bold',
+                    color: 'y2k.foreground',
+                    mb: 1,
+                    textTransform: 'uppercase',
+                    width: '100%',
+                  }}
+                >
+                  {policy.title}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: 'y2k.foreground',
+                    opacity: 0.9,
+                    fontSize: '0.875rem',
+                    lineHeight: 1.4,
+                    maxWidth: '90%',
+                  }}
+                >
+                  {policy.description}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Container>
+      </PoliciesContainer>
     </Box>
   );
 };

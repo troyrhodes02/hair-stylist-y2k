@@ -11,15 +11,11 @@ import {
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { AnimatedStars } from '..';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-15px); }
-`;
-
-const starFloat = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
 `;
 
 const StyledContainer = styled(Container)(({ theme }) => ({
@@ -75,15 +71,6 @@ const InstagramButton = styled(Link)(({ theme }) => ({
   },
 }));
 
-const starPositions = [
-  { left: '10%', top: '20%', delay: '0s', size: '16px' },
-  { left: '90%', top: '10%', delay: '0.5s', size: '20px' },
-  { left: '40%', top: '80%', delay: '1s', size: '24px' },
-  { left: '60%', top: '95%', delay: '1.5s', size: '18px' },
-  { left: '75%', top: '60%', delay: '2s', size: '22px' },
-  { left: '5%', top: '85%', delay: '2.5s', size: '20px' },
-];
-
 export const FollowUsSection = () => {
   return (
     <Box
@@ -94,25 +81,7 @@ export const FollowUsSection = () => {
         background: '#1A0912',
       }}
     >
-      {starPositions.map((pos, i) => (
-        <Box
-          key={i}
-          sx={{
-            position: 'absolute',
-            color: 'y2k.accent',
-            opacity: 0.2,
-            animation: `${starFloat} 4s ease-in-out infinite`,
-            animationDelay: pos.delay,
-            left: pos.left,
-            top: pos.top,
-            fontSize: pos.size,
-            zIndex: 0,
-          }}
-        >
-          ★
-        </Box>
-      ))}
-
+      <AnimatedStars />
       <StyledContainer>
         <Box
           sx={{

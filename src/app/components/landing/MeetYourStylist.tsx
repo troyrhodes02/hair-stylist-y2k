@@ -59,7 +59,7 @@ export const MeetYourStylist = () => {
   return (
     <StyledContainer maxWidth={false} disableGutters>
       <AnimatedStars />
-      <Container maxWidth='lg'>
+      <Container maxWidth='lg' sx={{ position: 'relative', zIndex: 1 }}>
         <Box
           sx={{
             maxWidth: '90rem',

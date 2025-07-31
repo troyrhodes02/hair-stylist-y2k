@@ -2,6 +2,7 @@
 
 import { Box, Container, Typography, keyframes } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
+import { AnimatedStars } from '..';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -158,6 +159,7 @@ export const PortfolioSection = () => {
         overflow: 'hidden',
       }}
     >
+      <AnimatedStars />
       <StyledContainer>
         {/* Section Header */}
         <Box sx={{ textAlign: 'center', mb: 10 }}>

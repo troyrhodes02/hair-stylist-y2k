@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import Providers from './components/Providers';
-import './globals.css';
+import RootClientLayout from './RootClientLayout';
+import { Playfair_Display } from 'next/font/google';
+
+// TODO: Move to a more appropriate location for global font loading
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Kell C. Styles - Y2K Hair Studio',
@@ -15,11 +22,8 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
-      <head>
-        <meta name='emotion-insertion-point' content='' />
-      </head>
-      <body>
-        <Providers>{children}</Providers>
+      <body className={playfair.variable}>
+        <RootClientLayout>{children}</RootClientLayout>
       </body>
     </html>
   );

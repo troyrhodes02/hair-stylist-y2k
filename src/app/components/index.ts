@@ -1,4 +1,9 @@
-export { default as HeroSection } from './HeroSection/HeroSection';
-export { default as MeetStylist } from './MeetStylist/MeetStylist';
-export { default as MyWork } from './MyWork/MyWork';
-export { default as Providers } from './Providers';
+export { HeroSection } from './landing/HeroSection';
+export { MeetYourStylist } from './landing/MeetYourStylist';
+export { PortfolioSection } from './landing/PortfolioSection';
+export { ReviewsSection } from './landing/ReviewsSection';
+export { BookingPoliciesSection } from './landing/BookingPoliciesSection';
+export { AnimatedStars } from './AnimatedStars/AnimatedStars';
+export { FollowUsSection } from './landing/FollowUsSection';
+export { ThankYouSection } from './landing/ThankYouSection';
+export { Navbar } from './Navbar/Navbar';

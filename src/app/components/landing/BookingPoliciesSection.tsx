@@ -24,18 +24,6 @@ const PoliciesContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-const PolicyTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: '"Playfair Display", serif',
-  fontSize: '3.5rem',
-  fontStyle: 'italic',
-  color: theme.palette.y2k.foreground,
-  lineHeight: 1,
-  marginBottom: theme.spacing(1),
-  [theme.breakpoints.up('md')]: {
-    fontSize: '6rem',
-  },
-}));
-
 const IconCircle = styled(Box)(({ theme }) => ({
   width: 80,
   height: 80,
@@ -99,18 +87,28 @@ export const BookingPoliciesSection = () => {
           <Box
             sx={{
               textAlign: 'center',
-              mb: { xs: 6, md: 8 }, // Increased bottom margin
+              mb: { xs: 6, md: 8 },
               position: 'relative',
               zIndex: 1,
             }}
           >
             <Box sx={{ position: 'relative', display: 'inline-block' }}>
-              <PolicyTitle variant='h2'>Booking</PolicyTitle>
               <Typography
                 variant='h2'
                 sx={{
+                  fontSize: { xs: '3.5rem', md: '6rem' },
+                  fontStyle: 'italic',
+                  color: 'y2k.foreground',
+                  lineHeight: 1,
+                  mb: 1,
+                }}
+              >
+                Booking
+              </Typography>
+              <Typography
+                variant='h3'
+                sx={{
                   fontSize: { xs: '2.5rem', md: '4.5rem' },
-                  fontWeight: 'bold',
                   color: 'y2k.foreground',
                   textTransform: 'uppercase',
                   lineHeight: 1,
@@ -171,13 +169,11 @@ export const BookingPoliciesSection = () => {
                 </IconCircle>
 
                 <Typography
-                  variant='h3'
+                  variant='h5'
                   sx={{
                     fontSize: { xs: '1.25rem', md: '1.5rem' },
-                    fontWeight: 'bold',
                     color: 'y2k.foreground',
                     mb: 1,
-                    textTransform: 'uppercase',
                     width: '100%',
                   }}
                 >
@@ -185,6 +181,7 @@ export const BookingPoliciesSection = () => {
                 </Typography>
 
                 <Typography
+                  variant='body1'
                   sx={{
                     color: 'y2k.foreground',
                     opacity: 0.9,

@@ -1,4 +1,18 @@
 import { createTheme } from '@mui/material/styles';
+import { Playfair_Display, Roboto } from 'next/font/google';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-roboto',
+  display: 'swap',
+});
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -50,13 +64,37 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Arial", sans-serif',
+    fontFamily: roboto.style.fontFamily,
     h1: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: playfair.style.fontFamily,
       fontStyle: 'italic',
+      fontWeight: 700,
     },
     h2: {
+      fontFamily: playfair.style.fontFamily,
       fontWeight: 700,
+    },
+    h3: {
+      fontFamily: playfair.style.fontFamily,
+      fontWeight: 700,
+    },
+    h4: {
+      fontFamily: playfair.style.fontFamily,
+      fontWeight: 700,
+    },
+    h5: {
+      fontFamily: roboto.style.fontFamily,
+      fontWeight: 500,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+    h6: {
+      fontFamily: roboto.style.fontFamily,
+      fontWeight: 500,
+    },
+    body1: {
+      fontFamily: roboto.style.fontFamily,
+      fontSize: '1rem',
     },
   },
   components: {

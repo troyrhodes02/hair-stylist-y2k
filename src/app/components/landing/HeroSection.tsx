@@ -5,33 +5,6 @@ import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { AnimatedStars } from '..';
 
-const Subtitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.y2k.foreground,
-  fontWeight: 500,
-  letterSpacing: '0.2em',
-  textTransform: 'uppercase',
-  fontSize: '1rem',
-  opacity: 0.8,
-  marginBottom: theme.spacing(2),
-}));
-
-const MainTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: '"Playfair Display", serif',
-  fontWeight: 'bold',
-  color: theme.palette.y2k.primary,
-  fontSize: 'clamp(4rem, 12vw, 8rem)',
-  lineHeight: 1.1,
-  position: 'relative',
-  display: 'inline-block',
-  '& .style-text': {
-    fontStyle: 'italic',
-    color: theme.palette.y2k.secondary,
-    display: 'block',
-    fontSize: '0.6em',
-    marginTop: '-0.2em',
-  },
-}));
-
 const PolaroidCard = styled(Box)(({ theme }) => ({
   backgroundColor: '#2D0F1F',
   padding: theme.spacing(4),
@@ -139,8 +112,8 @@ const cards: CardData[] = [
 ];
 
 const MobileCard = styled(Box)(({ theme }) => ({
-  width: '70%', // Reduced from 85%
-  maxWidth: '240px', // Reduced from 280px
+  width: '70%',
+  maxWidth: '240px',
   position: 'absolute',
   left: '50%',
   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -227,14 +200,40 @@ export const HeroSection = () => {
             px: 2,
           }}
         >
-          <Subtitle variant='h3'>Welcome to the Swag Site</Subtitle>
-
-          <MainTitle variant='h1'>
-            Kel.C.
-            <span className='style-text'>Styles</span>
-          </MainTitle>
+          <Typography
+            variant='h5'
+            sx={{
+              color: 'y2k.foreground',
+              opacity: 0.8,
+              mb: 2,
+            }}
+          >
+            Welcome to the Swag Site
+          </Typography>
 
           <Typography
+            variant='h1'
+            sx={{
+              color: 'y2k.primary',
+              fontSize: 'clamp(4rem, 12vw, 8rem)',
+              lineHeight: 1.1,
+              position: 'relative',
+              display: 'inline-block',
+              '& .style-text': {
+                fontStyle: 'italic',
+                color: 'y2k.secondary',
+                display: 'block',
+                fontSize: '0.6em',
+                marginTop: '-0.2em',
+              },
+            }}
+          >
+            Kel.C.
+            <span className='style-text'>Styles</span>
+          </Typography>
+
+          <Typography
+            variant='body1'
             sx={{
               color: 'y2k.foreground',
               maxWidth: '600px',
@@ -268,10 +267,10 @@ export const HeroSection = () => {
                 </Typography>
               </ImageFrame>
               <Typography
+                variant='h6'
                 sx={{
                   textAlign: 'center',
                   color: 'y2k.foreground',
-                  fontFamily: '"Playfair Display", serif',
                   fontStyle: 'italic',
                   fontSize: '0.875rem',
                   opacity: 0.9,
@@ -299,10 +298,10 @@ export const HeroSection = () => {
               <Typography sx={{ fontSize: '3rem' }}>💇‍♀️</Typography>
             </ImageFrame>
             <Typography
+              variant='h6'
               sx={{
                 textAlign: 'center',
                 color: 'y2k.foreground',
-                fontFamily: '"Playfair Display", serif',
                 fontStyle: 'italic',
                 fontSize: '1.25rem',
               }}
@@ -316,10 +315,10 @@ export const HeroSection = () => {
               <Typography sx={{ fontSize: '3rem' }}>✨</Typography>
             </ImageFrame>
             <Typography
+              variant='h6'
               sx={{
                 textAlign: 'center',
                 color: 'y2k.foreground',
-                fontFamily: '"Playfair Display", serif',
                 fontStyle: 'italic',
                 fontSize: '1.25rem',
               }}
@@ -333,10 +332,10 @@ export const HeroSection = () => {
               <Typography sx={{ fontSize: '3rem' }}>💄</Typography>
             </ImageFrame>
             <Typography
+              variant='h6'
               sx={{
                 textAlign: 'center',
                 color: 'y2k.foreground',
-                fontFamily: '"Playfair Display", serif',
                 fontStyle: 'italic',
                 fontSize: '1.25rem',
               }}

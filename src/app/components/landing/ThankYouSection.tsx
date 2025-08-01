@@ -184,7 +184,6 @@ export const ThankYouSection = () => {
                 variant='h1'
                 sx={{
                   fontSize: { xs: '3.5rem', md: '5rem' },
-                  fontWeight: 'bold',
                   color: 'y2k.foreground',
                   mb: 2,
                   lineHeight: 1,
@@ -194,8 +193,8 @@ export const ThankYouSection = () => {
               </Typography>
 
               <Typography
+                variant='h2'
                 sx={{
-                  fontFamily: '"Playfair Display", serif',
                   fontSize: { xs: '2rem', md: '3rem' },
                   fontStyle: 'italic',
                   color: 'y2k.primary',
@@ -208,10 +207,9 @@ export const ThankYouSection = () => {
 
             <Box>
               <Typography
-                variant='h2'
+                variant='h3'
                 sx={{
                   fontSize: { xs: '2rem', md: '3rem' },
-                  fontWeight: 'bold',
                   color: 'y2k.foreground',
                   mb: 2,
                 }}

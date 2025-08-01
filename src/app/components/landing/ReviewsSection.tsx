@@ -17,18 +17,6 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   paddingBottom: theme.spacing(10),
 }));
 
-const ReviewTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: '"Playfair Display", serif',
-  fontSize: '4rem',
-  fontStyle: 'italic',
-  color: theme.palette.y2k.foreground,
-  position: 'relative',
-  zIndex: 10,
-  [theme.breakpoints.up('md')]: {
-    fontSize: '5rem',
-  },
-}));
-
 const ReviewCard = styled(Box)(({ theme }) => ({
   position: 'relative',
   padding: theme.spacing(6),
@@ -160,7 +148,18 @@ export const ReviewsSection = () => {
           >
             <FavoriteIcon sx={{ color: 'white', fontSize: '2rem' }} />
           </Box>
-          <ReviewTitle variant='h2'>Customer Reviews</ReviewTitle>
+          <Typography
+            variant='h2'
+            sx={{
+              fontSize: { xs: '4rem', md: '5rem' },
+              color: 'y2k.foreground',
+              position: 'relative',
+              zIndex: 10,
+              fontStyle: 'italic',
+            }}
+          >
+            Customer Reviews
+          </Typography>
           <Box
             sx={{
               position: 'absolute',
@@ -231,12 +230,12 @@ export const ReviewsSection = () => {
               </Box>
 
               <Typography
+                variant='body1'
                 sx={{
                   textAlign: 'center',
                   color: 'y2k.foreground',
                   fontStyle: 'italic',
                   opacity: 0.9,
-                  fontSize: '1rem',
                   lineHeight: 1.6,
                 }}
               >

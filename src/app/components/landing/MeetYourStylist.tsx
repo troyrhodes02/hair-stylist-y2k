@@ -126,6 +126,7 @@ export const MeetYourStylist = () => {
             {/* Stylist info */}
             <Box sx={{ mb: 6 }}>
               <Typography
+                variant='body1'
                 sx={{
                   fontSize: { xs: '1.25rem', md: '1.5rem' },
                   color: 'y2k.foreground',
@@ -136,6 +137,7 @@ export const MeetYourStylist = () => {
                 As a passionate hair artist, my goal is to provide you with
               </Typography>
               <Typography
+                variant='body1'
                 sx={{
                   fontSize: { xs: '1.25rem', md: '1.5rem' },
                   color: 'y2k.primary',
@@ -147,6 +149,7 @@ export const MeetYourStylist = () => {
                 exceptional service and swaggy results.
               </Typography>
               <Typography
+                variant='body1'
                 sx={{
                   fontSize: { xs: '1.125rem', md: '1.25rem' },
                   color: 'y2k.foreground',
@@ -159,12 +162,11 @@ export const MeetYourStylist = () => {
 
             {/* Signature */}
             <Typography
-              variant='h1'
+              variant='h4'
               sx={{
                 fontSize: { xs: '1.875rem', md: '2.25rem' },
                 color: 'y2k.primary',
                 mb: 4,
-                fontFamily: '"Playfair Display", serif',
                 fontStyle: 'italic',
               }}
             >

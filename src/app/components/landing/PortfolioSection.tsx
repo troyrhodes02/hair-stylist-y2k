@@ -16,29 +16,6 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   paddingBottom: theme.spacing(10),
 }));
 
-const PortfolioTitle = styled(Typography)(({ theme }) => ({
-  fontSize: '4rem',
-  fontWeight: 'bold',
-  background: `linear-gradient(to right, ${theme.palette.y2k.primary}, ${theme.palette.y2k.secondary}, ${theme.palette.y2k.accent})`,
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  position: 'relative',
-  zIndex: 10,
-  [theme.breakpoints.up('md')]: {
-    fontSize: '5rem',
-  },
-}));
-
-const TitleShadow = styled(Typography)(({ theme }) => ({
-  position: 'absolute',
-  inset: 0,
-  fontSize: 'inherit',
-  fontWeight: 'bold',
-  color: `${theme.palette.y2k.primary}10`,
-  transform: 'translate(4px, 4px)',
-  zIndex: -1,
-}));
-
 const PortfolioGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(2, 1fr)',
@@ -164,12 +141,37 @@ export const PortfolioSection = () => {
         {/* Section Header */}
         <Box sx={{ textAlign: 'center', mb: 10 }}>
           <Box sx={{ position: 'relative', display: 'inline-block', mb: 3 }}>
-            <PortfolioTitle variant='h1'>
+            <Typography
+              variant='h1'
+              sx={{
+                fontSize: { xs: '4rem', md: '5rem' },
+                background: theme =>
+                  `linear-gradient(to right, ${theme.palette.y2k.primary}, ${theme.palette.y2k.secondary}, ${theme.palette.y2k.accent})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                position: 'relative',
+                zIndex: 10,
+              }}
+            >
               PORTFOLIO
-              <TitleShadow>PORTFOLIO</TitleShadow>
-            </PortfolioTitle>
+              <Typography
+                component='span'
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  fontSize: 'inherit',
+                  fontWeight: 'bold',
+                  color: theme => `${theme.palette.y2k.primary}10`,
+                  transform: 'translate(4px, 4px)',
+                  zIndex: -1,
+                }}
+              >
+                PORTFOLIO
+              </Typography>
+            </Typography>
           </Box>
           <Typography
+            variant='h6'
             sx={{
               color: 'y2k.foreground',
               fontSize: { xs: '1.25rem', md: '1.5rem' },
@@ -237,6 +239,7 @@ export const PortfolioSection = () => {
                   }}
                 >
                   <Typography
+                    variant='body1'
                     sx={{
                       color: 'y2k.foreground',
                       fontWeight: 600,

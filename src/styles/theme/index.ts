@@ -62,6 +62,10 @@ const theme = createTheme({
       card: '#2D1F33', // Card background
       border: '#FF1493', // Border color
     },
+    background: {
+      default: '#1A0F1F',
+      paper: '#2D1F33',
+    },
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
@@ -98,6 +102,20 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        'html, body': {
+          backgroundColor: '#1A0F1F',
+          minHeight: '100%',
+          overscrollBehavior: 'none',
+        },
+        body: {
+          minHeight: '100vh',
+          overscrollBehaviorY: 'none',
+          WebkitOverflowScrolling: 'touch',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

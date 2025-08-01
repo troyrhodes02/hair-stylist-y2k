@@ -156,35 +156,41 @@ export const Navbar = () => {
   const drawer = (
     <Box
       sx={{
-        textAlign: 'center',
-        background: '#1A0912',
         height: '100%',
-        py: 2,
-        mt: '80px', // Add top margin to prevent content overlap
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
       }}
     >
-      <List>
+      <List sx={{ py: 2 }}>
         {navItems.map(item => (
           <ListItem key={item.label} disablePadding>
             <ListItemButton
               sx={{
                 textAlign: 'center',
                 color: 'y2k.foreground',
+                py: 1.5,
                 '&:hover': {
                   color: 'y2k.primary',
-                  background: 'transparent',
+                  background: 'rgba(255, 255, 255, 0.05)',
                 },
               }}
               onClick={() => scrollToSection(item.href)}
             >
-              <ListItemText primary={item.label} />
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontSize: '1.1rem',
+                  fontWeight: 500,
+                }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem sx={{ pt: 2 }}>
-          <BookButton fullWidth>Book Now</BookButton>
-        </ListItem>
       </List>
+      <Box sx={{ p: 2 }}>
+        <BookButton fullWidth>Book Now</BookButton>
+      </Box>
     </Box>
   );
 
@@ -268,9 +274,10 @@ export const Navbar = () => {
               display: { xs: 'block', md: 'none' },
               '& .MuiDrawer-paper': {
                 boxSizing: 'border-box',
-                width: 280,
-                background: '#1A0912',
-                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                width: 240,
+                background: 'rgba(26, 9, 18, 0.9)',
+                backdropFilter: 'blur(10px)',
+                borderLeft: 'none',
                 mt: '80px', // Add top margin to prevent content overlap
                 height: 'calc(100% - 80px)', // Adjust height to account for navbar
               },

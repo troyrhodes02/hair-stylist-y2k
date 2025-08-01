@@ -1,0 +1,30 @@
+:root {
+  --background: #1A0F1F;
+}
+
+html {
+  background-color: var(--background);
+  min-height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  background-color: var(--background);
+  min-height: 100vh;
+  color: #FFFFFF;
+  overscroll-behavior-y: none;
+  position: relative;
+}
+
+/* Handle mobile-specific overscroll */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* iOS Safari specific fix */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+#__next {
+  min-height: 100vh;
+  background-color: var(--background);
+}

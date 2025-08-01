@@ -53,7 +53,7 @@ const theme = createTheme({
       primary: '#FF1493', // Hot pink
       secondary: '#FF69B4', // Light pink
       accent: '#FFEEFF', // Base color for stars, will be tinted
-      background: '#1A0F1F', // Dark purple background
+      background: '#1A0912', // Dark purple background
       backgroundAlt: '#2D1F33', // Lighter purple background
       overlayHero: 'rgba(10, 5, 12, 0.4)', // Dark overlay for hero
       overlayStylist: 'rgba(45, 31, 51, 0.5)', // Lighter overlay for stylist
@@ -63,7 +63,7 @@ const theme = createTheme({
       border: '#FF1493', // Border color
     },
     background: {
-      default: '#1A0F1F',
+      default: '#1A0912',
       paper: '#2D1F33',
     },
   },
@@ -105,7 +105,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         'html, body': {
-          backgroundColor: '#1A0F1F',
+          backgroundColor: '#1A0912',
           minHeight: '100%',
           overscrollBehavior: 'none',
         },

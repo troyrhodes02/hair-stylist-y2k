@@ -1,6 +1,7 @@
+import 'server-only';
 import { z } from 'zod';
 
-const envSchema = z.object({
+const serverSchema = z.object({
   // Payment Configuration
   CASHAPP_HANDLE: z
     .string()
@@ -35,25 +36,21 @@ const envSchema = z.object({
     .string()
     .min(1, 'Airtable weekly schedule table ID must be a non-empty string'),
 
-  // App Configuration
-  NEXT_PUBLIC_SITE_URL: z
-    .string()
-    .url('Site URL must be a valid URL')
-    .default('http://localhost:3000'),
+  // App Configuration (Server-side only)
   POLLING_INTERVAL_MINUTES: z.coerce.number().int().min(1).max(60).default(5),
 });
 
-export type Env = z.infer<typeof envSchema>;
+export type ServerEnv = z.infer<typeof serverSchema>;
 
-function validateEnv(): Env {
+function validateEnv(): ServerEnv {
   try {
-    const parsedEnv = envSchema.safeParse(process.env);
+    const parsedEnv = serverSchema.safeParse(process.env);
     if (!parsedEnv.success) {
       const issues = parsedEnv.error.issues.map(
         issue => `${issue.path.join('.')}: ${issue.message}`
       );
       throw new Error(
-        `Environment validation failed:\n${issues.join(
+        `Server environment validation failed:\n${issues.join(
           '\n'
         )}\n\nPlease check your .env.local file and ensure all required environment variables are set.`
       );
@@ -62,14 +59,12 @@ function validateEnv(): Env {
   } catch (error) {
     if (
       error instanceof Error &&
-      error.message.startsWith('Environment validation failed')
+      error.message.startsWith('Server environment validation failed')
     ) {
-      // Re-throw the specific validation error to be caught by the framework
       throw error;
     }
-    // For other unexpected errors, provide a generic message
     throw new Error(
-      'An unexpected error occurred during environment validation. Please check your setup.'
+      'An unexpected error occurred during server environment validation. Please check your setup.'
     );
   }
 }

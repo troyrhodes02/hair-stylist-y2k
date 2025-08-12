@@ -1,5 +1,5 @@
 import Airtable from 'airtable';
-import { env } from '../config/env';
+import { env } from '../server/env';
 import type { Booking, WeeklySchedule, BookingStatus } from '../types/booking';
 
 interface AirtableBookingFields {

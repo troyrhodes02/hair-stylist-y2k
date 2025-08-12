@@ -3,7 +3,7 @@
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { Service } from '@/lib/types/booking';
 import theme from '@/styles/theme';
-import { env } from '@/lib/config/env';
+import { useEffect, useState } from 'react';
 import AutoAwesome from '@mui/icons-material/AutoAwesome';
 
 interface DepositInstructionsProps {
@@ -17,6 +17,23 @@ const DepositInstructions = ({
   total,
   onComplete,
 }: DepositInstructionsProps) => {
+  const [depositInfo, setDepositInfo] = useState<{
+    depositAmount: number;
+    cashAppHandle: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchDepositInfo = async () => {
+      try {
+        const response = await fetch('/api/deposit-info');
+        const data = await response.json();
+        setDepositInfo(data);
+      } catch (error) {
+        console.error('Failed to fetch deposit info:', error);
+      }
+    };
+    fetchDepositInfo();
+  }, []);
   return (
     <Box sx={{ textAlign: 'center' }}>
       <Typography variant='h4' sx={{ color: theme.palette.y2k.primary, mb: 3 }}>
@@ -42,10 +59,12 @@ const DepositInstructions = ({
             Total Cost: ${total}
           </Typography>
           <Typography sx={{ color: 'white', opacity: 0.8 }}>
-            ${env.DEPOSIT_AMOUNT} deposit required to secure your appointment
+            ${depositInfo?.depositAmount ?? '...'} deposit required to secure
+            your appointment
           </Typography>
           <Typography sx={{ color: 'white', opacity: 0.8 }}>
-            ${total - env.DEPOSIT_AMOUNT} remaining balance due at appointment
+            ${total - (depositInfo?.depositAmount ?? 0)} remaining balance due
+            at appointment
           </Typography>
         </Box>
 
@@ -68,7 +87,7 @@ const DepositInstructions = ({
             variant='h4'
             sx={{ color: 'white', mb: 2, fontFamily: 'monospace' }}
           >
-            {env.CASHAPP_HANDLE}
+            {depositInfo?.cashAppHandle ?? '...'}
           </Typography>
           <Typography sx={{ color: 'white', opacity: 0.8, mb: 2 }}>
             Please include your name in the payment note

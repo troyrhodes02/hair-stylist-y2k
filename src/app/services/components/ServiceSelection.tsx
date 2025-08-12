@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Box, Container, Typography, Grid, Button } from '@mui/material';
+import { Box, Container, Typography, Button } from '@mui/material';
 import { services } from '../data/services';
 import { Service } from '../types';
 import ServiceCard from './ServiceCard';

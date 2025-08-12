@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { Playfair_Display, Roboto } from 'next/font/google';
+import { Playfair_Display, Roboto, Poppins } from 'next/font/google';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -10,7 +10,13 @@ const playfair = Playfair_Display({
 const roboto = Roboto({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
-  variable: '--font-roboto',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-poppins',
   display: 'swap',
 });
 
@@ -50,17 +56,17 @@ declare module '@mui/material/styles' {
 const theme = createTheme({
   palette: {
     y2k: {
-      primary: '#FF1493', // Hot pink
-      secondary: '#FF69B4', // Light pink
-      accent: '#FFEEFF', // Base color for stars, will be tinted
-      background: '#1A0912', // Dark purple background
-      backgroundAlt: '#2D1F33', // Lighter purple background
-      overlayHero: 'rgba(10, 5, 12, 0.4)', // Dark overlay for hero
-      overlayStylist: 'rgba(45, 31, 51, 0.5)', // Lighter overlay for stylist
-      foreground: '#FFFFFF', // White text
-      muted: '#2D1F33', // Lighter purple for muted elements
-      card: '#2D1F33', // Card background
-      border: '#FF1493', // Border color
+      primary: '#E5358E', // Hot pink from screenshot
+      secondary: '#E5358E', // Hot pink from screenshot
+      accent: '#E5358E', // Hot pink from screenshot
+      background: '#20121B', // Dark purple from screenshot
+      backgroundAlt: '#3a2d39', // Lighter purple from screenshot
+      overlayHero: 'rgba(10, 5, 12, 0.4)',
+      overlayStylist: 'rgba(45, 31, 51, 0.5)',
+      foreground: '#FFFFFF',
+      muted: 'rgba(229, 53, 142, 0.2)', // Muted hot pink
+      card: '#2E1E2A', // Card background from screenshot
+      border: '#E5358E', // Hot pink from screenshot
     },
     background: {
       default: '#1A0912',
@@ -139,4 +145,5 @@ const theme = createTheme({
   },
 });
 
+export { poppins };
 export default theme;

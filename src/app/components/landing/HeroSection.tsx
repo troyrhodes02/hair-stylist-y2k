@@ -1,9 +1,10 @@
 'use client';
 
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { AnimatedStars } from '..';
+import Link from 'next/link';
 
 const PolaroidCard = styled(Box)(({ theme }) => ({
   backgroundColor: '#2D0F1F',
@@ -246,6 +247,14 @@ export const HeroSection = () => {
           >
             Your one-stop destination for professional styling and swag results!
           </Typography>
+
+          <Box sx={{ mt: 6 }}>
+            <Link href='/services' passHref>
+              <Button variant='contained' className='y2k-button' size='large'>
+                Book Appointment
+              </Button>
+            </Link>
+          </Box>
         </Box>
 
         {/* Mobile Cards */}

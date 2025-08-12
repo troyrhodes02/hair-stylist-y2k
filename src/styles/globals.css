@@ -1,5 +1,5 @@
 :root {
-  --background: #1A0912;
+  --background: #1a0912;
 }
 
 html {
@@ -11,7 +11,7 @@ html {
 body {
   background-color: var(--background);
   min-height: 100vh;
-  color: #FFFFFF;
+  color: #ffffff;
   overscroll-behavior-y: none;
   position: relative;
 }

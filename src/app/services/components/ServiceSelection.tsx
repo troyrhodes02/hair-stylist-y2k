@@ -59,17 +59,28 @@ const ServiceSelection = () => {
           onSelectCategory={setSelectedCategory}
         />
 
-        <Grid container spacing={4} sx={{ mt: 4 }}>
+        <Box
+          sx={{
+            mt: 4,
+            display: 'grid',
+            gap: 4,
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+            },
+          }}
+        >
           {filteredServices.map(service => (
-            <Grid item key={service.id} xs={12} sm={6} md={4}>
+            <Box key={service.id}>
               <ServiceCard
                 service={service}
                 isSelected={selectedService?.id === service.id}
                 onSelect={handleSelectService}
               />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
 
         {selectedService && (
           <Box sx={{ mt: 6, textAlign: 'center' }}>

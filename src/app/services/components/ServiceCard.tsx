@@ -32,12 +32,14 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const ServiceCard = ({ service, isSelected, onSelect }: ServiceCardProps) => {
   return (
     <StyledCard>
-      <CardMedia
-        component='img'
-        height='140'
-        image={service.imageUrl}
-        alt={service.name}
-      />
+      {service.imageUrl && (
+        <CardMedia
+          component='img'
+          height='140'
+          image={service.imageUrl}
+          alt={service.name}
+        />
+      )}
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography
           gutterBottom
@@ -55,8 +57,16 @@ const ServiceCard = ({ service, isSelected, onSelect }: ServiceCardProps) => {
           {service.description}
         </Typography>
         <Typography variant='h6' sx={{ color: 'y2k.primary', mt: 2 }}>
-          Deposit Required: ${service.deposit}
+          Starting at ${service.basePrice}
         </Typography>
+        {service.addOns.length > 0 && (
+          <Typography
+            variant='caption'
+            sx={{ color: 'y2k.muted', display: 'block', mt: 1 }}
+          >
+            Add-ons available
+          </Typography>
+        )}
       </CardContent>
       <CardActions sx={{ justifyContent: 'center', p: 2 }}>
         <Button

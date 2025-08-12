@@ -24,6 +24,7 @@ declare module '@mui/material/styles' {
   interface Palette {
     y2k: {
       primary: string;
+      primaryDark: string;
       secondary: string;
       accent: string;
       background: string;
@@ -39,6 +40,7 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     y2k: {
       primary: string;
+      primaryDark: string;
       secondary: string;
       accent: string;
       background: string;
@@ -57,6 +59,7 @@ const theme = createTheme({
   palette: {
     y2k: {
       primary: '#E5358E', // Hot pink from screenshot
+      primaryDark: '#B32A70', // Darker hot pink for hover states
       secondary: '#E5358E', // Hot pink from screenshot
       accent: '#E5358E', // Hot pink from screenshot
       background: '#20121B', // Dark purple from screenshot

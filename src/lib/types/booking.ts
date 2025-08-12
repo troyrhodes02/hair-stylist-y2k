@@ -44,14 +44,6 @@ export interface Booking {
   updatedAt: Date;
 }
 
-export interface PaymentDetails {
-  amount: number;
-  currency: string;
-  sourceId: string;
-  customerId?: string;
-  idempotencyKey: string;
-}
-
 export interface NotificationPayload {
   to: string;
   type:

@@ -24,10 +24,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' style={{ backgroundColor: '#1A0912' }}>
       <body style={{ backgroundColor: '#1A0912' }}>
-        <script
-          async
-          src='https://sandbox.web.squarecdn.com/v1/square.js'
-        ></script>
         <RootClientLayout>{children}</RootClientLayout>
       </body>
     </html>

@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
 import { airtableService } from '@/lib/services/airtable';
-import { squareService } from '@/lib/services/square';
 import { twilioService } from '@/lib/services/twilio';
 import { availabilityService } from '@/lib/services/availability';
-import type { Customer, Service, PaymentDetails } from '@/lib/types/booking';
+import type { Customer, Service } from '@/lib/types/booking';
 
 interface BookingRequestBody {
   customerId: string;
   serviceId: string;
   startTime: string;
   endTime: string;
-  paymentDetails: PaymentDetails;
   customer: Customer;
   service: Service;
 }
@@ -18,15 +16,8 @@ interface BookingRequestBody {
 export async function POST(request: Request) {
   try {
     const body: BookingRequestBody = await request.json();
-    const {
-      customerId,
-      serviceId,
-      startTime,
-      endTime,
-      paymentDetails,
-      customer,
-      service,
-    } = body;
+    const { customerId, serviceId, startTime, endTime, customer, service } =
+      body;
 
     // Validate time slot availability
     const slot = {
@@ -42,9 +33,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Process payment
-    const paymentResult = await squareService.processPayment(paymentDetails);
-
     // Create booking
     const booking = await airtableService.createBooking({
       customerId,
@@ -52,7 +40,6 @@ export async function POST(request: Request) {
       startTime: new Date(startTime),
       endTime: new Date(endTime),
       status: 'new',
-      paymentId: paymentResult.paymentId,
     });
 
     // Send notifications

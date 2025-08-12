@@ -1,17 +1,18 @@
 import Airtable from 'airtable';
 import { env } from '../config/env';
-import type { Booking, WeeklySchedule } from '../types/booking';
+import type { Booking, WeeklySchedule, BookingStatus } from '../types/booking';
 
 interface AirtableBookingFields {
   customerId: string;
   serviceId: string;
   startTime: string;
   endTime: string;
-  status: string;
+  status: BookingStatus;
   paymentId: string;
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: string | BookingStatus | undefined; // Index signature for Airtable FieldSet
 }
 
 interface AirtableScheduleFields {
@@ -19,12 +20,13 @@ interface AirtableScheduleFields {
   'Start Time': string;
   'End Time': string;
   Available: boolean;
+  [key: string]: string | boolean; // Index signature for Airtable FieldSet
 }
 
 class AirtableService {
   private base: Airtable.Base;
-  private bookingTable: Airtable.Table<Partial<Booking>>;
-  private scheduleTable: Airtable.Table<Partial<WeeklySchedule>>;
+  private bookingTable: Airtable.Table<AirtableBookingFields>;
+  private scheduleTable: Airtable.Table<AirtableScheduleFields>;
 
   constructor() {
     Airtable.configure({
@@ -139,17 +141,25 @@ class AirtableService {
   }
 
   // Helper functions to transform Airtable records to our types
+  private validateBookingStatus(status: string): BookingStatus {
+    if (!['new', 'confirmed', 'completed', 'cancelled'].includes(status)) {
+      throw new Error(`Invalid booking status: ${status}`);
+    }
+    return status as BookingStatus;
+  }
+
   private transformBookingRecord(
-    record: Airtable.Record<Partial<Booking>>
+    record: Airtable.Record<AirtableBookingFields>
   ): Booking {
-    const fields = record.fields as AirtableBookingFields;
+    const fields = record.fields;
+    const status = this.validateBookingStatus(fields.status);
     return {
       id: record.id,
       customerId: fields.customerId,
       serviceId: fields.serviceId,
       startTime: new Date(fields.startTime),
       endTime: new Date(fields.endTime),
-      status: fields.status,
+      status,
       paymentId: fields.paymentId,
       notes: fields.notes,
       createdAt: new Date(fields.createdAt || record._rawJson.createdTime),
@@ -157,16 +167,35 @@ class AirtableService {
     };
   }
 
+  private getDayNumber(dayName: string): number {
+    const days = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+    ];
+    const dayIndex = days.indexOf(dayName.toLowerCase());
+    if (dayIndex === -1) {
+      throw new Error(
+        `Invalid day name: ${dayName}. Expected one of: ${days.join(', ')}`
+      );
+    }
+    return dayIndex;
+  }
+
   private transformScheduleRecord(
-    record: Airtable.Record<Partial<WeeklySchedule>>
+    record: Airtable.Record<AirtableScheduleFields>
   ): WeeklySchedule {
-    const fields = record.fields as AirtableScheduleFields;
+    const fields = record.fields;
     return {
       id: record.id,
-      dayOfWeek: fields.Day, // Assuming field name in Airtable is 'Day'
-      startTime: fields['Start Time'], // Assuming field name is 'Start Time'
-      endTime: fields['End Time'], // Assuming field name is 'End Time'
-      isAvailable: fields.Available === true, // Assuming field name is 'Available'
+      dayOfWeek: this.getDayNumber(fields.Day), // Convert day name to number (0-6)
+      startTime: fields['Start Time'],
+      endTime: fields['End Time'],
+      isAvailable: fields.Available === true,
     };
   }
 }

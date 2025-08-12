@@ -4,13 +4,8 @@ const envSchema = z.object({
   // Payment Configuration
   CASHAPP_HANDLE: z
     .string()
-    .min(1, 'CashApp handle must be a non-empty string')
-    .optional(),
+    .min(1, 'CashApp handle must be a non-empty string'),
   DEPOSIT_AMOUNT: z.coerce.number().int().min(1).default(15),
-  SQUARE_WEBHOOK_SIGNATURE_KEY: z
-    .string()
-    .min(1, 'Square webhook signature key must be a non-empty string')
-    .optional(),
 
   // Twilio Configuration
   TWILIO_ACCOUNT_SID: z
@@ -26,23 +21,19 @@ const envSchema = z.object({
     .min(1, 'Twilio phone number must be a non-empty string')
     .optional(),
 
-  // Airtable Configuration
+  // Airtable Configuration (Required)
   AIRTABLE_ACCESS_TOKEN: z
     .string()
-    .min(1, 'Airtable access token must be a non-empty string')
-    .optional(),
+    .min(1, 'Airtable access token must be a non-empty string'),
   AIRTABLE_BASE_ID: z
     .string()
-    .min(1, 'Airtable base ID must be a non-empty string')
-    .optional(),
+    .min(1, 'Airtable base ID must be a non-empty string'),
   AIRTABLE_BOOKING_TABLE_ID: z
     .string()
-    .min(1, 'Airtable booking table ID must be a non-empty string')
-    .optional(),
+    .min(1, 'Airtable booking table ID must be a non-empty string'),
   AIRTABLE_WEEKLY_SCHEDULE_TABLE_ID: z
     .string()
-    .min(1, 'Airtable weekly schedule table ID must be a non-empty string')
-    .optional(),
+    .min(1, 'Airtable weekly schedule table ID must be a non-empty string'),
 
   // App Configuration
   NEXT_PUBLIC_SITE_URL: z

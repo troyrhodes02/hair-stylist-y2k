@@ -11,13 +11,25 @@ export async function POST(request: Request) {
 
     const rawBody = await request.text();
 
-    // Verify webhook signature
-    const hmac = crypto.createHmac('sha256', env.SQUARE_WEBHOOK_SIGNATURE_KEY);
-    hmac.update(rawBody);
-    const hash = hmac.digest('base64');
+    // Verify webhook signature if key is configured
+    if (env.SQUARE_WEBHOOK_SIGNATURE_KEY) {
+      const hmac = crypto.createHmac(
+        'sha256',
+        env.SQUARE_WEBHOOK_SIGNATURE_KEY
+      );
+      hmac.update(rawBody);
+      const hash = hmac.digest('base64');
 
-    if (hash !== signature) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+      if (hash !== signature) {
+        return NextResponse.json(
+          { error: 'Invalid signature' },
+          { status: 401 }
+        );
+      }
+    } else {
+      console.warn(
+        'Square webhook signature verification skipped - no signature key configured'
+      );
     }
 
     const body = JSON.parse(rawBody);

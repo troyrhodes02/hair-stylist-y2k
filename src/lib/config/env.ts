@@ -7,6 +7,10 @@ const envSchema = z.object({
     .min(1, 'CashApp handle must be a non-empty string')
     .optional(),
   DEPOSIT_AMOUNT: z.coerce.number().int().min(1).default(15),
+  SQUARE_WEBHOOK_SIGNATURE_KEY: z
+    .string()
+    .min(1, 'Square webhook signature key must be a non-empty string')
+    .optional(),
 
   // Twilio Configuration
   TWILIO_ACCOUNT_SID: z

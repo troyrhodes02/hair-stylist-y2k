@@ -1,8 +1,9 @@
 'use client';
 
 import { Box, Container, Typography, keyframes } from '@mui/material';
-import { styled, Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { AnimatedStars } from '..';
+import Image from 'next/image';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -71,56 +72,56 @@ const CategoryBadge = styled(Box)(({ theme }) => ({
 const portfolioImages = [
   {
     id: 1,
-    emoji: '💇‍♀️',
+    src: '/images/port1.jpeg',
     alt: 'Blonde highlights styling',
     category: 'Color',
     height: 320,
   },
   {
     id: 2,
-    emoji: '💁‍♀️',
+    src: '/images/port2.jpeg',
     alt: 'Curly hair styling',
     category: 'Texture',
     height: 256,
   },
   {
     id: 3,
-    emoji: '🎨',
+    src: '/images/port3.jpeg',
     alt: 'Hair color transformation',
     category: 'Color',
     height: 288,
   },
   {
     id: 4,
-    emoji: '👰‍♀️',
+    src: '/images/port4.jpeg',
     alt: 'Wedding hair styling',
     category: 'Special Event',
     height: 320,
   },
   {
     id: 5,
-    emoji: '✨',
+    src: '/images/port5.jpeg',
     alt: 'Braided hairstyle',
     category: 'Style',
     height: 256,
   },
   {
     id: 6,
-    emoji: '💫',
+    src: '/images/port6.jpeg',
     alt: 'Short hair cut styling',
     category: 'Cut',
     height: 288,
   },
   {
     id: 7,
-    emoji: '💄',
+    src: '/images/port7.jpeg',
     alt: 'Hair extensions styling',
     category: 'Extensions',
     height: 320,
   },
   {
     id: 8,
-    emoji: '🌟',
+    src: '/images/port8.jpeg',
     alt: 'Natural hair styling',
     category: 'Natural',
     height: 256,
@@ -144,30 +145,13 @@ export const PortfolioSection = () => {
             <Typography
               variant='h1'
               sx={{
-                fontSize: { xs: '4rem', md: '5rem' },
-                background: theme =>
-                  `linear-gradient(to right, ${theme.palette.y2k.primary}, ${theme.palette.y2k.secondary}, ${theme.palette.y2k.accent})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                position: 'relative',
-                zIndex: 10,
+                fontSize: { xs: '3rem', sm: '4rem', md: '5rem' },
+                color: 'y2k.primary',
+                textShadow: theme =>
+                  `4px 4px 0px ${theme.palette.y2k.primary}30`,
               }}
             >
               PORTFOLIO
-              <Typography
-                component='span'
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  fontSize: 'inherit',
-                  fontWeight: 'bold',
-                  color: theme => `${theme.palette.y2k.primary}10`,
-                  transform: 'translate(4px, 4px)',
-                  zIndex: -1,
-                }}
-              >
-                PORTFOLIO
-              </Typography>
             </Typography>
           </Box>
           <Typography
@@ -199,69 +183,12 @@ export const PortfolioSection = () => {
             >
               <CategoryBadge>{image.category}</CategoryBadge>
 
-              <Box
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  p: 3,
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '3rem',
-                    mb: 1,
-                    transition: 'transform 0.7s ease',
-                    '&:hover': {
-                      transform: 'scale(1.25) rotate(12deg)',
-                    },
-                  }}
-                >
-                  {image.emoji}
-                </Typography>
-
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    p: 3,
-                    background:
-                      'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-                    transform: 'translateY(100%)',
-                    transition: 'transform 0.5s ease',
-                    '.MuiBox-root:hover > &': {
-                      transform: 'translateY(0)',
-                    },
-                  }}
-                >
-                  <Typography
-                    variant='body1'
-                    sx={{
-                      color: 'y2k.foreground',
-                      fontWeight: 600,
-                      textAlign: 'center',
-                      fontSize: '0.75rem',
-                      mb: 0.5,
-                    }}
-                  >
-                    {image.alt}
-                  </Typography>
-                  <Box
-                    sx={{
-                      width: '3rem',
-                      height: '2px',
-                      mx: 'auto',
-                      background: (theme: Theme) =>
-                        `linear-gradient(to right, ${theme.palette.y2k.primary}, ${theme.palette.y2k.secondary})`,
-                      borderRadius: '9999px',
-                    }}
-                  />
-                </Box>
-              </Box>
+              <Image
+                src={image.src}
+                alt={image.alt}
+                layout='fill'
+                objectFit='cover'
+              />
             </PortfolioCard>
           ))}
         </PortfolioGrid>

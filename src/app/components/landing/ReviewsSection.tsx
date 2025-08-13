@@ -4,6 +4,7 @@ import { Box, Container, Typography, keyframes } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import StarIcon from '@mui/icons-material/Star';
+import Image from 'next/image';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -36,15 +37,16 @@ const ReviewCard = styled(Box)(({ theme }) => ({
 }));
 
 const ProfileCircle = styled(Box)(({ theme }) => ({
-  width: 80,
-  height: 80,
+  width: 120,
+  height: 120,
   borderRadius: '50%',
-  border: `2px solid ${theme.palette.y2k.primary}`,
+  border: `3px solid ${theme.palette.y2k.primary}`,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   background: '#2D1F33',
   position: 'relative',
+  overflow: 'hidden',
   '&::after': {
     content: '""',
     position: 'absolute',
@@ -59,18 +61,18 @@ const reviews = [
   {
     name: 'Sekai',
     text: 'Nice job, my style lasted me 3 weeks',
-    emoji: '👩‍💼',
+    image: '/images/sekai.jpeg',
   },
   {
     name: 'Alyssa',
     text: 'I love my style, its exactly what i wanted.',
-    emoji: '👩‍🎓',
+    image: '/images/alyssa.jpeg',
     showHeart: true,
   },
   {
     name: 'Airica',
     text: 'My hair looks so good and shiny when i leave the chair. Ill definetly be back',
-    emoji: '👩‍💻',
+    image: '/images/airica.jpeg',
   },
 ];
 
@@ -194,9 +196,12 @@ export const ReviewsSection = () => {
           {reviews.map(review => (
             <ReviewCard key={review.name}>
               <ProfileCircle>
-                <Typography sx={{ fontSize: '2rem' }}>
-                  {review.emoji}
-                </Typography>
+                <Image
+                  src={review.image}
+                  alt={review.name}
+                  layout='fill'
+                  objectFit='cover'
+                />
               </ProfileCircle>
 
               <Typography

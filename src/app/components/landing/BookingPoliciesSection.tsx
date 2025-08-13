@@ -62,7 +62,7 @@ const policies = [
     icon: AttachMoneyIcon,
     title: 'DEPOSIT',
     description:
-      '$10 non- refundable deposit upon booking. Cashapp and Zelle only',
+      '$15 non-refundable deposit upon booking. Cashapp and Zelle only',
   },
   {
     icon: AttachMoneyIcon,

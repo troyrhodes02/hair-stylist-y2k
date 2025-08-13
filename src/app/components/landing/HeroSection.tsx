@@ -276,6 +276,7 @@ export const HeroSection = () => {
                   alt={card.text}
                   layout='fill'
                   objectFit='cover'
+                  objectPosition={card.id === 1 ? 'center 10%' : 'center'}
                 />
               </ImageFrame>
               <Typography

@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import Link from 'next/link';
 
 const glow = keyframes`
   0%, 100% { text-shadow: 0 0 10px rgba(255, 20, 147, 0.4); }
@@ -189,7 +190,9 @@ export const Navbar = () => {
         ))}
       </List>
       <Box sx={{ p: 2 }}>
-        <BookButton fullWidth>Book Now</BookButton>
+        <Link href='/services' passHref>
+          <BookButton fullWidth>Book Now</BookButton>
+        </Link>
       </Box>
     </Box>
   );
@@ -239,7 +242,9 @@ export const Navbar = () => {
                     {item.label}
                   </NavButton>
                 ))}
-                <BookButton sx={{ ml: 2 }}>Book Now</BookButton>
+                <Link href='/services' passHref>
+                  <BookButton sx={{ ml: 2 }}>Book Now</BookButton>
+                </Link>
               </Box>
 
               {/* Mobile Menu Button */}

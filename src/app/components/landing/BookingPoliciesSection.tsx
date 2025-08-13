@@ -65,6 +65,12 @@ const policies = [
       '$10 non- refundable deposit upon booking. Cashapp and Zelle only',
   },
   {
+    icon: AttachMoneyIcon,
+    title: 'REMAINING BALANCE',
+    description:
+      'The remaining balance after the deposit is due in CASH at the time of your appointment.',
+  },
+  {
     icon: CloseIcon,
     title: 'CANCELLATION',
     description:
@@ -141,7 +147,8 @@ export const BookingPoliciesSection = () => {
               gridTemplateColumns: {
                 xs: '1fr',
                 sm: 'repeat(2, 1fr)',
-                lg: 'repeat(4, 1fr)',
+                lg: 'repeat(3, 1fr)',
+                xl: 'repeat(5, 1fr)',
               },
               gap: { xs: 2, md: 3 },
               maxWidth: '1400px',

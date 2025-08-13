@@ -9,9 +9,8 @@ import {
   Link,
 } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { AnimatedStars } from '..';
+import Image from 'next/image';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -170,74 +169,12 @@ export const FollowUsSection = () => {
                 }}
               >
                 <PhoneScreen>
-                  {/* Profile Mockup */}
-                  <Box sx={{ color: 'white', textAlign: 'left' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box
-                        sx={{
-                          width: 50,
-                          height: 50,
-                          borderRadius: '50%',
-                          background: 'y2k.accent',
-                          mr: 2,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '1.5rem',
-                        }}
-                      >
-                        💇‍♀️
-                      </Box>
-                      <Typography sx={{ fontWeight: 'bold' }}>
-                        kelc.styles
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        mb: 2,
-                        textAlign: 'center',
-                      }}
-                    >
-                      <Box>
-                        <Typography sx={{ fontWeight: 'bold' }}>123</Typography>
-                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          Posts
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography sx={{ fontWeight: 'bold' }}>456</Typography>
-                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          Followers
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography sx={{ fontWeight: 'bold' }}>789</Typography>
-                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          Following
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '4px',
-                      }}
-                    >
-                      {[...Array(9)].map((_, i) => (
-                        <Box
-                          key={i}
-                          sx={{
-                            aspectRatio: '1',
-                            background: '#FF149330',
-                            borderRadius: '4px',
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
+                  <Image
+                    src='/images/instagram.png'
+                    alt='Instagram profile'
+                    layout='fill'
+                    objectFit='cover'
+                  />
                 </PhoneScreen>
               </PhoneMockup>
 
@@ -254,53 +191,12 @@ export const FollowUsSection = () => {
                 }}
               >
                 <PhoneScreen>
-                  {/* Post Mockup */}
-                  <Box sx={{ color: 'white', textAlign: 'left' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Box
-                        sx={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: '50%',
-                          background: 'y2k.accent',
-                          mr: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '1rem',
-                        }}
-                      >
-                        💇‍♀️
-                      </Box>
-                      <Typography
-                        sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
-                      >
-                        kelc.styles
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        aspectRatio: '1',
-                        background: '#FF149330',
-                        borderRadius: '8px',
-                        mb: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '5rem',
-                      }}
-                    >
-                      ✨
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: '12px', mb: 1 }}>
-                      <FavoriteBorderIcon />
-                      <ChatBubbleOutlineIcon />
-                    </Box>
-                    <Typography sx={{ fontSize: '0.8rem' }}>
-                      <span style={{ fontWeight: 'bold' }}>kelc.styles</span>{' '}
-                      Swag results 💅
-                    </Typography>
-                  </Box>
+                  <Image
+                    src='/images/selfie.jpeg'
+                    alt='Customer selfie'
+                    layout='fill'
+                    objectFit='cover'
+                  />
                 </PhoneScreen>
               </PhoneMockup>
             </Box>

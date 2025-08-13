@@ -3,6 +3,8 @@
 import { Box, Button, Container, Typography, keyframes } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AnimatedStars } from '..';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const glow = keyframes`
   0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
@@ -35,6 +37,7 @@ const CircularPhoto = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   position: 'relative',
+  overflow: 'hidden', // Add this to crop the image
   [theme.breakpoints.up('md')]: {
     width: 320,
     height: 320,
@@ -81,7 +84,12 @@ export const MeetYourStylist = () => {
           >
             <Box sx={{ position: 'relative' }}>
               <CircularPhoto>
-                <Typography sx={{ fontSize: '4rem' }}>💇‍♀️</Typography>
+                <Image
+                  src='/images/kelc4.jpeg'
+                  alt='Kelsee Chenea'
+                  layout='fill'
+                  objectFit='cover'
+                />
               </CircularPhoto>
               <FloatingEmoji>
                 <Typography sx={{ fontSize: '2rem' }}>💫</Typography>
@@ -174,14 +182,16 @@ export const MeetYourStylist = () => {
             </Typography>
 
             {/* CTA Button */}
-            <Button
-              className='y2k-button'
-              sx={{
-                mt: 2,
-              }}
-            >
-              Book Your Appointment
-            </Button>
+            <Link href='/services' passHref>
+              <Button
+                className='y2k-button'
+                sx={{
+                  mt: 2,
+                }}
+              >
+                Book Your Appointment
+              </Button>
+            </Link>
           </Box>
         </Box>
       </Container>

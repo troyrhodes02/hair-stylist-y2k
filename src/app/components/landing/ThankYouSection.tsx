@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Container, Typography, keyframes, styled } from '@mui/material';
+import Image from 'next/image';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -120,7 +121,12 @@ export const ThankYouSection = () => {
             >
               <PhoneMockup>
                 <PhoneScreen>
-                  <Typography sx={{ fontSize: '4rem' }}>🤳</Typography>
+                  <Image
+                    src='/images/selfie.jpeg'
+                    alt='Customer selfie'
+                    layout='fill'
+                    objectFit='cover'
+                  />
                 </PhoneScreen>
               </PhoneMockup>
               {/* Decorative elements */}

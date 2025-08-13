@@ -62,6 +62,8 @@ const DepositInstructions = ({
           position: 'relative',
           maxWidth: 500,
           width: '100%',
+          maxHeight: '90vh', // Add max height
+          overflowY: 'auto', // Enable vertical scrolling
           bgcolor: 'rgba(30, 20, 25, 0.95)',
           border: `1px solid ${theme.palette.y2k.muted}`,
           borderRadius: '16px',

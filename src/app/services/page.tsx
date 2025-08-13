@@ -131,7 +131,7 @@ const ServicesPage = () => {
             variant='h1'
             sx={{
               color: theme.palette.y2k.primary,
-              fontSize: '7rem',
+              fontSize: { xs: '3.5rem', sm: '5rem', md: '7rem' },
               fontWeight: 'bold',
             }}
           >

@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { AnimatedStars } from '..';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const PolaroidCard = styled(Box)(({ theme }) => ({
   backgroundColor: '#2D0F1F',
@@ -304,7 +305,13 @@ export const HeroSection = () => {
           {/* Desktop Cards */}
           <PolaroidCard sx={{ transform: 'rotate(-3deg)' }}>
             <ImageFrame>
-              <Typography sx={{ fontSize: '3rem' }}>💇‍♀️</Typography>
+              <Image
+                src='/images/kelc1.jpeg'
+                alt='Styling example 1'
+                layout='fill'
+                objectFit='cover'
+                objectPosition='center 10%'
+              />
             </ImageFrame>
             <Typography
               variant='h6'
@@ -321,7 +328,12 @@ export const HeroSection = () => {
 
           <PolaroidCard>
             <ImageFrame>
-              <Typography sx={{ fontSize: '3rem' }}>✨</Typography>
+              <Image
+                src='/images/kelc2.jpeg'
+                alt='Styling example 2'
+                layout='fill'
+                objectFit='cover'
+              />
             </ImageFrame>
             <Typography
               variant='h6'
@@ -338,7 +350,12 @@ export const HeroSection = () => {
 
           <PolaroidCard sx={{ transform: 'rotate(3deg)' }}>
             <ImageFrame>
-              <Typography sx={{ fontSize: '3rem' }}>💄</Typography>
+              <Image
+                src='/images/kelc3.jpeg'
+                alt='Styling example 3'
+                layout='fill'
+                objectFit='cover'
+              />
             </ImageFrame>
             <Typography
               variant='h6'

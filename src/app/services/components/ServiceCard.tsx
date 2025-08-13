@@ -30,6 +30,19 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const ServiceCard = ({ service, isSelected, onSelect }: ServiceCardProps) => {
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    let durationString = '';
+    if (hours > 0) {
+      durationString += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+    if (remainingMinutes > 0) {
+      durationString += `${hours > 0 ? ' ' : ''}${remainingMinutes} minutes`;
+    }
+    return durationString;
+  };
+
   return (
     <StyledCard>
       {service.imageUrl && (
@@ -45,9 +58,20 @@ const ServiceCard = ({ service, isSelected, onSelect }: ServiceCardProps) => {
           gutterBottom
           variant='h5'
           component='div'
-          sx={{ color: 'y2k.foreground' }}
+          sx={{
+            color: 'y2k.foreground',
+            display: 'flex',
+            alignItems: 'center',
+          }}
         >
           {service.name}
+          <Typography
+            variant='body2'
+            component='span'
+            sx={{ color: 'white', ml: 1.5 }}
+          >
+            ({formatDuration(service.durationMinutes)})
+          </Typography>
         </Typography>
         <Typography
           variant='body2'

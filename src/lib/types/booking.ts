@@ -1,4 +1,9 @@
-export type BookingStatus = 'new' | 'confirmed' | 'completed' | 'cancelled';
+export type BookingStatus =
+  | 'new'
+  | 'confirmed'
+  | 'completed'
+  | 'cancelled'
+  | 'pending-payment';
 
 export interface TimeSlot {
   startTime: Date;

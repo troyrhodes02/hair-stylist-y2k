@@ -36,6 +36,14 @@ const serverSchema = z.object({
     .string()
     .min(1, 'Airtable weekly schedule table ID must be a non-empty string'),
 
+  // **Required** Airtable Field Names
+  // These MUST match the exact names in your Airtable base.
+  BOOKING_DATE_FIELD: z.string().min(1, 'BOOKING_DATE_FIELD is required'),
+  BOOKING_STATUS_FIELD: z.string().min(1, 'BOOKING_STATUS_FIELD is required'),
+  BOOKING_START_TIME_FIELD: z
+    .string()
+    .min(1, 'BOOKING_START_TIME_FIELD is required'),
+
   // App Configuration (Server-side only)
   POLLING_INTERVAL_MINUTES: z.coerce.number().int().min(1).max(60).default(5),
 });

@@ -1,89 +1,66 @@
 import { NextResponse } from 'next/server';
-import { airtableService } from '@/lib/services/airtable';
-import { twilioService } from '@/lib/services/twilio';
-import { availabilityService } from '@/lib/services/availability';
-import type { Customer, Service } from '@/lib/types/booking';
-
-interface BookingRequestBody {
-  customerId: string;
-  serviceId: string;
-  startTime: string;
-  endTime: string;
-  customer: Customer;
-  service: Service;
-}
+import { getAirtableService } from '@/lib/services/airtable';
 
 export async function POST(request: Request) {
   try {
-    const body: BookingRequestBody = await request.json();
-    const { customerId, serviceId, startTime, endTime, customer, service } =
-      body;
+    const body = await request.json();
+    const {
+      serviceId,
+      startTime,
+      endTime,
+      customerName,
+      customerEmail,
+      customerPhone,
+      basePrice,
+      addOns,
+      addOnPrice,
+      totalPrice,
+      duration,
+    } = body;
 
-    // Validate time slot availability
-    const slot = {
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
-      isAvailable: true,
-    };
-
-    if (!availabilityService.isValidTimeSlot(slot, service.durationMinutes)) {
+    // Validate required fields
+    if (
+      !serviceId ||
+      !startTime ||
+      !endTime ||
+      !customerName ||
+      !customerEmail ||
+      !customerPhone ||
+      !basePrice ||
+      !totalPrice
+    ) {
       return NextResponse.json(
-        { error: 'Selected time slot is not available' },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Create booking
+    const airtableService = getAirtableService();
+
+    // Create the booking with initial status of "pending-payment"
     const booking = await airtableService.createBooking({
-      customerId,
       serviceId,
       startTime: new Date(startTime),
       endTime: new Date(endTime),
-      status: 'new',
+      duration,
+      customerId: `${customerName}|${customerEmail}|${customerPhone}`, // Store customer info in a single field for now
+      status: 'pending-payment',
+      paymentId: '', // Will be updated when payment is confirmed
+      basePrice,
+      addOns,
+      addOnPrice,
+      totalPrice,
     });
 
-    // Send notifications
-    await twilioService.sendNotification({
-      to: customer.phone,
-      type: 'booking_confirmation',
+    return NextResponse.json({
+      success: true,
       booking,
-      customer,
-      service,
+      message: 'Booking created successfully',
     });
-
-    return NextResponse.json({ booking });
   } catch (error) {
-    console.error('Error in bookings endpoint:', error);
+    console.error('Error creating booking:', error);
     return NextResponse.json(
       { error: 'Failed to create booking' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const bookingId = searchParams.get('id');
-
-    if (bookingId) {
-      const booking = await airtableService.getBooking(bookingId);
-      if (!booking) {
-        return NextResponse.json(
-          { error: 'Booking not found' },
-          { status: 404 }
-        );
-      }
-      return NextResponse.json({ booking });
-    }
-
-    // In a real implementation, you would add pagination and filters
-    const bookings = await airtableService.getNewBookings();
-    return NextResponse.json({ bookings });
-  } catch (error) {
-    console.error('Error in bookings endpoint:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch bookings' },
       { status: 500 }
     );
   }

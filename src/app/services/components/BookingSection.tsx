@@ -21,6 +21,7 @@ import AutoAwesome from '@mui/icons-material/AutoAwesome';
 import PersonOutline from '@mui/icons-material/PersonOutline';
 import Phone from '@mui/icons-material/Phone';
 import EmailOutlined from '@mui/icons-material/EmailOutlined';
+import MessageOutlined from '@mui/icons-material/MessageOutlined';
 import CalendarTodayOutlined from '@mui/icons-material/CalendarTodayOutlined';
 
 interface BookingSectionProps {
@@ -46,7 +47,8 @@ const BookingSection = ({
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
-  const [loading] = useState(false);
+  const [specialRequests, setSpecialRequests] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -149,8 +151,47 @@ const BookingSection = ({
 
   // Removed unused handleBookingSubmit as we're using handleCustomerInfoSubmit for form submission
 
-  const handleDepositComplete = () => {
-    window.location.href = '/services/booking-success';
+  const handleDepositComplete = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          serviceId: selectedServiceObject?.name || selectedService,
+          startTime: selectedTimeSlot?.startTime,
+          endTime: selectedTimeSlot?.endTime,
+          duration: serviceDuration,
+          customerName,
+          customerEmail,
+          customerPhone,
+          basePrice: selectedServiceObject?.price || 0,
+          addOns: selectedAddOns,
+          addOnPrice: selectedAddOns.length
+            ? total - (selectedServiceObject?.price || 0)
+            : 0,
+          totalPrice: total,
+          notes: specialRequests,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create booking');
+      }
+
+      // If successful, redirect to success page
+      window.location.href = '/services/booking-success';
+    } catch (err) {
+      console.error('Error creating booking:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create booking');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -462,6 +503,43 @@ const BookingSection = ({
                         }}
                       />
 
+                      <TextField
+                        fullWidth
+                        label='Special Requests'
+                        multiline
+                        rows={3}
+                        value={specialRequests}
+                        onChange={e => setSpecialRequests(e.target.value)}
+                        placeholder='Any special requests or notes for your appointment?'
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment
+                              position='start'
+                              sx={{ alignSelf: 'flex-start', mt: 1.5 }}
+                            >
+                              <MessageOutlined sx={{ color: '#f8c5d8' }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            color: '#f8c5d8',
+                            '& fieldset': {
+                              borderColor: '#f8c5d8',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: theme.palette.y2k.primary,
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: theme.palette.y2k.primary,
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#f8c5d8',
+                          },
+                        }}
+                      />
+
                       <Button
                         variant='contained'
                         onClick={handleCustomerInfoSubmit}
@@ -505,14 +583,16 @@ const BookingSection = ({
                 )}
               </Box>
 
-              {/* Step 3: Deposit Instructions */}
-              {step === 3 && (
-                <DepositInstructions
-                  service={selectedServiceObject!}
-                  total={total}
-                  onComplete={handleDepositComplete}
-                />
-              )}
+              {/* Deposit Instructions Modal */}
+              <DepositInstructions
+                service={selectedServiceObject!}
+                total={total}
+                onComplete={handleDepositComplete}
+                loading={loading}
+                error={error}
+                open={step === 3}
+                onClose={() => setStep(2)}
+              />
             </>
           ) : (
             <Box sx={{ textAlign: 'center', py: 8 }}>

@@ -36,7 +36,7 @@ export default function BookingSuccessPage() {
             mb: 4,
           }}
         >
-          Booking Received!
+          Booking Request Received!
         </Typography>
 
         <Typography
@@ -46,18 +46,29 @@ export default function BookingSuccessPage() {
             mb: 3,
           }}
         >
-          Thank you for your booking request! Please check your SMS for deposit
-          instructions.
+          Thank you for submitting your booking request! We&apos;ll review it
+          shortly.
         </Typography>
 
         <Typography
           sx={{
-            color: theme.palette.y2k.muted,
-            mb: 6,
+            color: 'white',
+            mb: 2,
           }}
         >
-          Your appointment will be confirmed once we receive your deposit.
-          We&apos;ll send you a confirmation text!
+          Please be on the lookout for a confirmation message for your
+          appointment.
+        </Typography>
+
+        <Typography
+          sx={{
+            color: 'white',
+            mb: 6,
+            fontStyle: 'italic',
+          }}
+        >
+          Note: Your appointment is not confirmed until you receive a
+          confirmation message from us.
         </Typography>
 
         <Link href='/' passHref>

@@ -80,7 +80,7 @@ class TwilioService {
         message = `Your appointment for ${service.name} on ${booking.startTime.toLocaleDateString()} has been cancelled. Please contact us if you need to reschedule.`;
         break;
       case 'stylist_alert':
-        message = this.formatStylistAlert(booking, customer, service);
+        message = `🔔 New Booking Request!\n\nCustomer: ${customer.firstName} ${customer.lastName}\nService: ${service.name}\nDate: ${booking.startTime.toLocaleDateString()}\nTime: ${booking.startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}\nPhone: ${customer.phone}\n\nPlease review and confirm this booking in Airtable.`;
         break;
       default:
         throw new Error(`Invalid notification type: ${type}`);

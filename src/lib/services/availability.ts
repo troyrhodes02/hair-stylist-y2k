@@ -1,5 +1,5 @@
 import type { TimeSlot, WeeklySchedule, Booking } from '../types/booking';
-import { airtableService } from './airtable';
+import { getAirtableService } from './airtable';
 
 class AvailabilityService {
   private readonly SLOT_DURATION = 30; // minutes
@@ -110,6 +110,7 @@ class AvailabilityService {
         `\n--- Getting available slots for ${date.toDateString()} ---`
       );
 
+      const airtableService = getAirtableService();
       const schedule = await airtableService.getWeeklySchedule();
       console.log('Fetched weekly schedule:', schedule);
 
@@ -135,7 +136,7 @@ class AvailabilityService {
         `Operating hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
       );
 
-      const existingBookings = await this.getBookingsForDate(date);
+      const existingBookings = await airtableService.getBookingsForDate(date);
       console.log('Existing bookings for the day:', existingBookings);
 
       const slots = this.generateTimeSlots(
@@ -161,6 +162,7 @@ class AvailabilityService {
   }
 
   private async getBookingsForDate(date: Date): Promise<Booking[]> {
+    const airtableService = getAirtableService();
     return airtableService.getBookingsForDate(date);
   }
 

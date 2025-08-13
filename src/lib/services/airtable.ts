@@ -1,169 +1,165 @@
 import Airtable from 'airtable';
 import { env } from '../server/env';
 import type { Booking, WeeklySchedule, BookingStatus } from '../types/booking';
+import type { BookingFields, ScheduleFields } from '../types/airtable';
 
-interface AirtableBookingFields {
-  customerId: string;
-  serviceId: string;
-  startTime: string;
-  endTime: string;
-  status: BookingStatus;
-  paymentId: string;
-  notes?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  [key: string]: string | BookingStatus | undefined; // Index signature for Airtable FieldSet
-}
+// Exact Airtable column names, with env overrides for critical fields
+const F = {
+  // Configurable via env (preserve existing feature)
+  date: env.BOOKING_DATE_FIELD || 'Preferred Date',
+  startTime: env.BOOKING_START_TIME_FIELD || 'Preferred Time',
+  startTimeISO: 'Start Time ISO', // Added for time calculations
+  endTimeISO: 'End Time ISO', // Added for time calculations
+  status: env.BOOKING_STATUS_FIELD || 'Booking Status',
 
-interface AirtableScheduleFields {
-  Day: string;
-  'Start Time': string;
-  'End Time': string;
-  Available: boolean;
-  [key: string]: string | boolean; // Index signature for Airtable FieldSet
-}
+  // Fixed column names from Airtable
+  serviceName: 'Service Name',
+  customerName: 'Customer Name',
+  customerEmail: 'Customer Email',
+  customerPhone: 'Customer Phone',
+  notes: 'Special Requests',
+  paymentStatus: 'Payment Status',
+  duration: 'Duration',
+
+  // Financial details
+  basePrice: 'Base Price',
+  addOns: 'Add-ons',
+  addOnPrice: 'Add-on Price',
+  totalPrice: 'Total Price',
+} as const;
 
 class AirtableService {
   private base: Airtable.Base;
-  private bookingTable: Airtable.Table<AirtableBookingFields>;
-  private scheduleTable: Airtable.Table<AirtableScheduleFields>;
+  private bookingTable: Airtable.Table<BookingFields>;
+  private scheduleTable: Airtable.Table<ScheduleFields>;
 
   constructor() {
     Airtable.configure({
       apiKey: env.AIRTABLE_ACCESS_TOKEN,
     });
-
     this.base = Airtable.base(env.AIRTABLE_BASE_ID);
     this.bookingTable = this.base(env.AIRTABLE_BOOKING_TABLE_ID);
     this.scheduleTable = this.base(env.AIRTABLE_WEEKLY_SCHEDULE_TABLE_ID);
   }
 
-  // Booking Operations
-  async createBooking(
-    booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>
-  ): Promise<Booking> {
-    try {
-      const record = await this.bookingTable.create([
-        {
-          fields: {
-            ...booking,
-            startTime: booking.startTime.toISOString(),
-            endTime: booking.endTime.toISOString(),
-          },
-        },
-      ]);
+  // --- Booking Operations ---
 
-      return this.transformBookingRecord(record[0]);
-    } catch (error) {
-      throw new Error(
-        `Failed to create booking: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
-  }
-
-  async getBooking(id: string): Promise<Booking | null> {
+  async createBooking(input: {
+    serviceId: string;
+    startTime: Date;
+    endTime: Date;
+    customerId: string;
+    status: BookingStatus;
+    paymentId?: string;
+    notes?: string;
+    basePrice: number;
+    addOns?: string[];
+    addOnPrice?: number;
+    totalPrice: number;
+    duration: number;
+  }): Promise<{ id: string }> {
     try {
-      const record = await this.bookingTable.find(id);
-      return record ? this.transformBookingRecord(record) : null;
-    } catch (error) {
-      throw new Error(
-        `Failed to get booking: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
-  }
+      // Parse customer info from the combined customerId string
+      const [customerName, customerEmail, customerPhone] =
+        input.customerId.split('|');
 
-  async updateBookingStatus(
-    id: string,
-    status: Booking['status']
-  ): Promise<Booking> {
-    try {
-      const record = await this.bookingTable.update(id, {
-        status,
-        updatedAt: new Date().toISOString(),
+      // Build fields using exact Airtable column names
+      // Format the time in US Central Time
+      const timeOptions: Intl.DateTimeFormatOptions = {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'America/Chicago',
+      };
+      const formattedTime =
+        input.startTime.toLocaleTimeString('en-US', timeOptions) + ' CST';
+
+      const fields: Partial<BookingFields> = {
+        [F.customerName]: customerName,
+        [F.customerEmail]: customerEmail,
+        [F.customerPhone]: customerPhone,
+        [F.serviceName]: input.serviceId,
+        [F.date]: input.startTime.toISOString().split('T')[0], // YYYY-MM-DD
+        [F.startTime]: formattedTime, // e.g., "11:30 AM CST"
+        [F.startTimeISO]: input.startTime.toISOString(), // Store ISO time for calculations
+        [F.endTimeISO]: input.endTime.toISOString(), // Store ISO time for calculations
+        [F.status]: input.status,
+        [F.basePrice]: input.basePrice,
+        [F.totalPrice]: input.totalPrice,
+      };
+
+      if (input.notes) fields[F.notes] = input.notes;
+      if (input.addOns?.length) {
+        fields[F.addOns] = input.addOns.join(', ');
+        fields[F.addOnPrice] = input.addOnPrice || 0;
+      }
+
+      fields[F.duration] = input.duration;
+
+      // Set initial payment status
+      fields[F.paymentStatus] =
+        input.status === 'pending-payment' ? 'Pending' : 'Not Required';
+
+      const [record] = await this.bookingTable.create([{ fields }], {
+        typecast: true,
       });
-      return this.transformBookingRecord(record);
-    } catch (error) {
-      throw new Error(
-        `Failed to update booking status: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
-  }
+      console.log('Successfully created booking with fields:', fields);
 
-  async getNewBookings(): Promise<Booking[]> {
-    try {
-      const records = await this.bookingTable
-        .select({
-          filterByFormula: "{status} = 'new'",
-          sort: [{ field: 'createdAt', direction: 'desc' }],
-        })
-        .all();
-
-      return records.map(this.transformBookingRecord);
+      return { id: record.id };
     } catch (error) {
-      throw new Error(
-        `Failed to get new bookings: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      console.error('Failed to create booking in Airtable:', {
+        error,
+        note: 'Check that Airtable column names match F mapping exactly.',
+        attemptedFields: Object.keys(F),
+      });
+      throw new Error('Failed to create booking.');
     }
   }
 
   async getBookingsForDate(date: Date): Promise<Booking[]> {
-    try {
-      // Convert date to YYYY-MM-DD format for comparison
-      const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split('T')[0];
+    const formula = `AND(
+      IS_SAME({${F.date}}, '${dateStr}', 'day'),
+      NOT({${F.status}} = 'cancelled'),
+      NOT({${F.status}} = 'no-show')
+    )`;
 
-      const records = await this.bookingTable
-        .select({
-          filterByFormula: `AND(
-            IS_SAME({startTime}, '${dateStr}', 'day'),
-            NOT({status} = 'cancelled')
-          )`,
-        })
-        .all();
+    console.log(`Querying Airtable bookings with formula: ${formula}`);
 
-      return records.map(this.transformBookingRecord);
-    } catch (error) {
-      throw new Error(
-        `Failed to get bookings for date: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    const records = await this.bookingTable
+      .select({
+        filterByFormula: formula,
+        sort: [{ field: env.BOOKING_START_TIME_FIELD, direction: 'asc' }],
+      })
+      .all();
+
+    return records.map(record => this.transformBookingRecord(record));
   }
 
-  // Weekly Schedule Operations
+  // --- Schedule Operations ---
+
   async getWeeklySchedule(): Promise<WeeklySchedule[]> {
-    try {
-      const records = await this.scheduleTable.select().all();
-      return records.map(this.transformScheduleRecord);
-    } catch (error) {
-      throw new Error(
-        `Failed to get weekly schedule: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    const records = await this.scheduleTable.select().all();
+    return records.map(record => this.transformScheduleRecord(record));
   }
 
-  // Helper functions to transform Airtable records to our types
-  private validateBookingStatus(status: string): BookingStatus {
-    if (!['new', 'confirmed', 'completed', 'cancelled'].includes(status)) {
-      throw new Error(`Invalid booking status: ${status}`);
-    }
-    return status as BookingStatus;
-  }
+  // --- Data Transformers ---
 
   private transformBookingRecord(
-    record: Airtable.Record<AirtableBookingFields>
+    record: Airtable.Record<BookingFields>
   ): Booking {
     const fields = record.fields;
-    const status = this.validateBookingStatus(fields.status);
     return {
       id: record.id,
-      customerId: fields.customerId,
-      serviceId: fields.serviceId,
-      startTime: new Date(fields.startTime),
-      endTime: new Date(fields.endTime),
-      status,
-      paymentId: fields.paymentId,
-      notes: fields.notes,
-      createdAt: new Date(fields.createdAt || record._rawJson.createdTime),
-      updatedAt: new Date(fields.updatedAt || record._rawJson.createdTime),
+      customerId: `${fields['Customer Name']}|${fields['Customer Email']}|${fields['Customer Phone']}`,
+      serviceId: fields['Service Name'],
+      startTime: new Date(fields['Start Time ISO'] || fields['Preferred Time']),
+      endTime: new Date(fields['End Time ISO']),
+      status: fields['Booking Status'],
+      paymentId: undefined,
+      notes: fields['Special Requests'],
+      createdAt: new Date(record._rawJson.createdTime),
+      updatedAt: new Date(record._rawJson.createdTime),
     };
   }
 
@@ -178,27 +174,32 @@ class AirtableService {
       'saturday',
     ];
     const dayIndex = days.indexOf(dayName.toLowerCase());
-    if (dayIndex === -1) {
-      throw new Error(
-        `Invalid day name: ${dayName}. Expected one of: ${days.join(', ')}`
-      );
-    }
+    if (dayIndex === -1) throw new Error(`Invalid day name: ${dayName}`);
     return dayIndex;
   }
 
   private transformScheduleRecord(
-    record: Airtable.Record<AirtableScheduleFields>
+    record: Airtable.Record<ScheduleFields>
   ): WeeklySchedule {
     const fields = record.fields;
     return {
       id: record.id,
-      dayOfWeek: this.getDayNumber(fields.Day), // Convert day name to number (0-6)
+      dayOfWeek: this.getDayNumber(fields['Day']),
       startTime: fields['Start Time'],
       endTime: fields['End Time'],
-      isAvailable: fields.Available === true,
+      isAvailable: fields['Available'],
     };
   }
 }
 
-// Export a singleton instance
-export const airtableService = new AirtableService();
+let airtableServiceInstance: AirtableService | null = null;
+
+function getAirtableService(): AirtableService {
+  if (!airtableServiceInstance) {
+    airtableServiceInstance = new AirtableService();
+  }
+  return airtableServiceInstance;
+}
+
+// Export the getter function instead of the instance
+export { getAirtableService };

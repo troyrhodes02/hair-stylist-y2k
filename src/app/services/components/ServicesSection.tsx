@@ -19,6 +19,7 @@ interface Service {
   category: string;
   basePrice: number;
   description: string;
+  durationMinutes: number;
   addOns: Array<{ name: string; price: number }>;
   isHourly?: boolean;
 }
@@ -31,6 +32,11 @@ interface ServicesSectionProps {
   onAddOnToggle: (addOnName: string) => void;
   total: number;
 }
+
+const formatDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  return `${hours} hr${hours > 1 ? 's' : ''}`;
+};
 
 const ServicesSection = ({
   services,
@@ -113,7 +119,33 @@ const ServicesSection = ({
                           <AutoAwesome
                             sx={{ color: theme.palette.y2k.primary }}
                           />
-                          <Typography variant='h6'>{service.name}</Typography>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1,
+                            }}
+                          >
+                            <Typography variant='h6'>{service.name}</Typography>
+                            {service.category !== 'Editorial Styling' && (
+                              <Typography
+                                variant='body2'
+                                sx={{
+                                  color: 'white',
+                                  opacity: 0.7,
+                                  fontSize: '0.85rem',
+                                  fontWeight: 300,
+                                  letterSpacing: '0.02em',
+                                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                  px: 1,
+                                  py: 0.5,
+                                  borderRadius: '4px',
+                                }}
+                              >
+                                {formatDuration(service.durationMinutes)}
+                              </Typography>
+                            )}
+                          </Box>
                         </Box>
                         <Box textAlign='right'>
                           <Typography

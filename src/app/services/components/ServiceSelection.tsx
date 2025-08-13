@@ -12,10 +12,10 @@ const ServiceSelection = () => {
     useState<string>('All Services');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
-  const activeServices = useMemo(
-    () => services.filter(service => service.active),
-    []
-  );
+  const activeServices = useMemo(() => {
+    const active = services.filter(service => service.active);
+    return active.length > 0 ? active : services;
+  }, []);
 
   const categories = useMemo(() => {
     const allCategories = activeServices.map(service => service.category);

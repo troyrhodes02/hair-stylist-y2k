@@ -178,7 +178,7 @@ export const MeetYourStylist = () => {
                 fontStyle: 'italic',
               }}
             >
-              Kelsee Chenea
+              Kelsee Chenea&apos;
             </Typography>
 
             {/* CTA Button */}

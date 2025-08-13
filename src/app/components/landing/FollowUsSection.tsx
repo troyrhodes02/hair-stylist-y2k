@@ -162,8 +162,7 @@ export const FollowUsSection = () => {
             >
               <PhoneMockup
                 sx={{
-                  display: { xs: 'none', md: 'block' },
-                  transform: 'rotate(-8deg)',
+                  transform: { xs: 'none', md: 'rotate(-8deg)' },
                   position: 'relative',
                   zIndex: 2,
                 }}
@@ -180,6 +179,7 @@ export const FollowUsSection = () => {
 
               <PhoneMockup
                 sx={{
+                  display: { xs: 'none', md: 'block' },
                   transform: {
                     xs: 'none',
                     md: 'rotate(8deg) translate(-40px, 40px)',

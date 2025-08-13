@@ -85,6 +85,7 @@ interface CardData {
   id: number;
   emoji: string;
   text: string;
+  image: string;
   defaultRotation: number;
   defaultTop: string;
 }
@@ -94,6 +95,7 @@ const cards: CardData[] = [
     id: 1,
     emoji: '💇‍♀️',
     text: 'Professional styling ✨',
+    image: '/images/kelc1.jpeg',
     defaultRotation: -5,
     defaultTop: '5%',
   },
@@ -101,6 +103,7 @@ const cards: CardData[] = [
     id: 2,
     emoji: '✨',
     text: 'Swag results 💅',
+    image: '/images/kelc2.jpeg',
     defaultRotation: 3,
     defaultTop: '35%',
   },
@@ -108,6 +111,7 @@ const cards: CardData[] = [
     id: 3,
     emoji: '💄',
     text: 'Your best look 🔥',
+    image: '/images/kelc3.jpeg',
     defaultRotation: -2,
     defaultTop: '65%',
   },
@@ -267,14 +271,12 @@ export const HeroSection = () => {
               sx={getCardStyle(card)}
             >
               <ImageFrame>
-                <Typography
-                  sx={{
-                    fontSize: '2.5rem',
-                    transform: 'scale(0.9)',
-                  }}
-                >
-                  {card.emoji}
-                </Typography>
+                <Image
+                  src={card.image}
+                  alt={card.text}
+                  layout='fill'
+                  objectFit='cover'
+                />
               </ImageFrame>
               <Typography
                 variant='h6'

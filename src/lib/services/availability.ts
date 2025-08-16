@@ -136,12 +136,8 @@ class AvailabilityService {
         `Operating hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
       );
 
-      const existingBookings = await airtableService.getBookingsForDate(date);
-      const confirmedBookings = existingBookings.filter(
-        booking => booking.status === 'confirmed'
-      );
-      console.log('Existing bookings for the day:', existingBookings);
-      console.log('Confirmed bookings for availability:', confirmedBookings);
+      const confirmedBookings = await airtableService.getBookingsForDate(date);
+      console.log('Confirmed bookings for the day:', confirmedBookings);
 
       const slots = this.generateTimeSlots(
         startTime,

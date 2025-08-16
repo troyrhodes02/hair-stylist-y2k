@@ -1,6 +1,11 @@
 import Airtable from 'airtable';
 import { env } from '../server/env';
-import type { Booking, WeeklySchedule, BookingStatus } from '../types/booking';
+import type {
+  Booking,
+  WeeklySchedule,
+  BookingStatus,
+  NewBooking,
+} from '../types/booking';
 import type { BookingFields, ScheduleFields } from '../types/airtable';
 
 // Exact Airtable column names, with env overrides for critical fields
@@ -146,21 +151,20 @@ export class AirtableBookingService {
 
   async getBookingsForDate(date: Date): Promise<Booking[]> {
     const dateStr = date.toISOString().split('T')[0];
-    const formula = `AND(
-      IS_SAME({${F.date}}, '${dateStr}', 'day'),
-      LOWER({${F.status}}) = 'confirmed'
-    )`;
+    const formula = `IS_SAME({${F.date}}, '${dateStr}', 'day')`;
 
     console.log(`Querying Airtable bookings with formula: ${formula}`);
 
     const records = await this.bookingTable
       .select({
         filterByFormula: formula,
-        sort: [{ field: env.BOOKING_START_TIME_FIELD, direction: 'asc' }],
+        sort: [{ field: F.startTimeISO, direction: 'asc' }],
       })
       .all();
 
-    return records.map(record => this.transformBookingRecord(record));
+    return records
+      .map(record => this.transformBookingRecord(record))
+      .filter(booking => booking.status === 'confirmed');
   }
 
   // --- Schedule Operations ---

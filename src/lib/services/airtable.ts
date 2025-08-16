@@ -61,6 +61,9 @@ export class AirtableBookingService {
       }),
       [F.startTimeISO]: booking.startTime.toISOString(),
       [F.endTimeISO]: booking.endTime.toISOString(),
+      [F.duration]: Math.round(
+        (booking.endTime.getTime() - booking.startTime.getTime()) / 60000
+      ),
       [F.status]: booking.status,
       [F.notes]: booking.notes || '',
     };

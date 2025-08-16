@@ -31,6 +31,7 @@ const serverSchema = z.object({
     .min(1, 'BOOKING_START_TIME_FIELD is required'),
 
   // App Configuration (Server-side only)
+  SITE_TZ: z.string().default('America/Chicago'),
   POLLING_INTERVAL_MINUTES: z.coerce.number().int().min(1).max(60).default(5),
 });
 

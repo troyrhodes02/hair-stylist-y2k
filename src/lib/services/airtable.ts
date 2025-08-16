@@ -173,18 +173,52 @@ export class AirtableBookingService {
     record: Airtable.Record<BookingFields>
   ): Booking {
     const fields = record.fields;
+    const startTime = fields[F.startTimeISO]
+      ? new Date(fields[F.startTimeISO])
+      : this.combineDateAndTime(fields[F.date], fields[F.startTime]);
+
+    const endTime = fields[F.endTimeISO]
+      ? new Date(fields[F.endTimeISO])
+      : new Date(startTime.getTime() + (fields[F.duration] as number) * 60000);
+
     return {
       id: record.id,
       customerId: `${fields['Customer Name']}|${fields['Customer Email']}|${fields['Customer Phone']}`,
       serviceId: fields['Service Name'],
-      startTime: new Date(fields['Start Time ISO'] || fields['Preferred Time']),
-      endTime: new Date(fields['End Time ISO']),
-      status: fields['Booking Status'],
+      startTime,
+      endTime,
+      status: fields[F.status],
       paymentId: undefined,
-      notes: fields['Special Requests'],
+      notes: fields[F.notes],
       createdAt: new Date(record._rawJson.createdTime),
       updatedAt: new Date(record._rawJson.createdTime),
     };
+  }
+
+  private combineDateAndTime(dateStr?: string, timeStr?: string): Date {
+    if (!dateStr || !timeStr) return new Date();
+
+    const [hours, minutes] = this.parseTimeString(timeStr);
+    const date = new Date(dateStr);
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  }
+
+  private parseTimeString(timeStr: string): [number, number] {
+    const iso = new Date(timeStr);
+    if (!isNaN(iso.getTime())) {
+      return [iso.getHours(), iso.getMinutes()];
+    }
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) {
+      return [0, 0];
+    }
+    let hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    const period = match[3].toUpperCase();
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return [hours, minutes];
   }
 
   private getDayNumber(dayName: string): number {

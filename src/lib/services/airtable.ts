@@ -145,8 +145,7 @@ export class AirtableBookingService {
     const dateStr = date.toISOString().split('T')[0];
     const formula = `AND(
       IS_SAME({${F.date}}, '${dateStr}', 'day'),
-      NOT({${F.status}} = 'cancelled'),
-      NOT({${F.status}} = 'no-show')
+      {${F.status}} = 'confirmed'
     )`;
 
     console.log(`Querying Airtable bookings with formula: ${formula}`);

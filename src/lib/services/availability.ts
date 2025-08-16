@@ -137,12 +137,16 @@ class AvailabilityService {
       );
 
       const existingBookings = await airtableService.getBookingsForDate(date);
+      const confirmedBookings = existingBookings.filter(
+        booking => booking.status === 'confirmed'
+      );
       console.log('Existing bookings for the day:', existingBookings);
+      console.log('Confirmed bookings for availability:', confirmedBookings);
 
       const slots = this.generateTimeSlots(
         startTime,
         endTime,
-        existingBookings,
+        confirmedBookings,
         serviceDuration
       );
       console.log('Generated time slots:', slots);

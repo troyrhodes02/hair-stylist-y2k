@@ -1,6 +1,11 @@
 import Airtable from 'airtable';
 import { env } from '../server/env';
-import type { Booking, WeeklySchedule, BookingStatus } from '../types/booking';
+import type {
+  Booking,
+  WeeklySchedule,
+  BookingStatus,
+  NewBooking,
+} from '../types/booking';
 import type { BookingFields, ScheduleFields } from '../types/airtable';
 
 // Exact Airtable column names, with env overrides for critical fields
@@ -61,6 +66,9 @@ export class AirtableBookingService {
       }),
       [F.startTimeISO]: booking.startTime.toISOString(),
       [F.endTimeISO]: booking.endTime.toISOString(),
+      [F.duration]: Math.round(
+        (booking.endTime.getTime() - booking.startTime.getTime()) / 60000
+      ),
       [F.status]: booking.status,
       [F.notes]: booking.notes || '',
     };
@@ -143,22 +151,20 @@ export class AirtableBookingService {
 
   async getBookingsForDate(date: Date): Promise<Booking[]> {
     const dateStr = date.toISOString().split('T')[0];
-    const formula = `AND(
-      IS_SAME({${F.date}}, '${dateStr}', 'day'),
-      NOT({${F.status}} = 'cancelled'),
-      NOT({${F.status}} = 'no-show')
-    )`;
+    const formula = `IS_SAME({${F.date}}, '${dateStr}', 'day')`;
 
     console.log(`Querying Airtable bookings with formula: ${formula}`);
 
     const records = await this.bookingTable
       .select({
         filterByFormula: formula,
-        sort: [{ field: env.BOOKING_START_TIME_FIELD, direction: 'asc' }],
+        sort: [{ field: F.startTimeISO, direction: 'asc' }],
       })
       .all();
 
-    return records.map(record => this.transformBookingRecord(record));
+    return records
+      .map(record => this.transformBookingRecord(record))
+      .filter(booking => booking.status === 'confirmed');
   }
 
   // --- Schedule Operations ---
@@ -174,18 +180,52 @@ export class AirtableBookingService {
     record: Airtable.Record<BookingFields>
   ): Booking {
     const fields = record.fields;
+    const startTime = fields[F.startTimeISO]
+      ? new Date(fields[F.startTimeISO])
+      : this.combineDateAndTime(fields[F.date], fields[F.startTime]);
+
+    const endTime = fields[F.endTimeISO]
+      ? new Date(fields[F.endTimeISO])
+      : new Date(startTime.getTime() + (fields[F.duration] as number) * 60000);
+
     return {
       id: record.id,
       customerId: `${fields['Customer Name']}|${fields['Customer Email']}|${fields['Customer Phone']}`,
       serviceId: fields['Service Name'],
-      startTime: new Date(fields['Start Time ISO'] || fields['Preferred Time']),
-      endTime: new Date(fields['End Time ISO']),
-      status: fields['Booking Status'],
+      startTime,
+      endTime,
+      status: (fields[F.status] as string)?.toLowerCase() as BookingStatus,
       paymentId: undefined,
-      notes: fields['Special Requests'],
+      notes: fields[F.notes],
       createdAt: new Date(record._rawJson.createdTime),
       updatedAt: new Date(record._rawJson.createdTime),
     };
+  }
+
+  private combineDateAndTime(dateStr?: string, timeStr?: string): Date {
+    if (!dateStr || !timeStr) return new Date();
+
+    const [hours, minutes] = this.parseTimeString(timeStr);
+    const date = new Date(dateStr);
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  }
+
+  private parseTimeString(timeStr: string): [number, number] {
+    const iso = new Date(timeStr);
+    if (!isNaN(iso.getTime())) {
+      return [iso.getHours(), iso.getMinutes()];
+    }
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) {
+      return [0, 0];
+    }
+    let hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    const period = match[3].toUpperCase();
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return [hours, minutes];
   }
 
   private getDayNumber(dayName: string): number {

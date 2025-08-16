@@ -1,11 +1,48 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography, Button } from '@mui/material';
 import { AnimatedStars } from '@/app/components/AnimatedStars/AnimatedStars';
 import theme from '@/styles/theme';
 import Link from 'next/link';
+import emailjs from '@emailjs/browser';
 
 export default function BookingSuccessPage() {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const sendEmail = async () => {
+      const bookingData = {
+        customer_name: searchParams.get('customerName') || '',
+        customer_email: searchParams.get('customerEmail') || '',
+        customer_phone: searchParams.get('customerPhone') || '',
+        service_name: searchParams.get('serviceName') || '',
+        booking_date: searchParams.get('bookingDate') || '',
+        booking_time: searchParams.get('bookingTime') || '',
+        duration_minutes: searchParams.get('duration') || '',
+        notes: searchParams.get('notes') || '',
+      };
+
+      const bookingId = searchParams.get('bookingId');
+      if (bookingId && !localStorage.getItem(bookingId)) {
+        try {
+          await emailjs.send(
+            process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+            process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+            bookingData,
+            process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+          );
+          localStorage.setItem(bookingId, 'true');
+        } catch (error) {
+          console.error('Failed to send email:', error);
+        }
+      }
+    };
+
+    sendEmail();
+  }, [searchParams]);
+
   return (
     <Box
       sx={{

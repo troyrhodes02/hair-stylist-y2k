@@ -28,7 +28,7 @@ const F = {
   totalPrice: 'Total Price',
 } as const;
 
-class AirtableService {
+export class AirtableBookingService {
   private base: Airtable.Base;
   private bookingTable: Airtable.Table<BookingFields>;
   private scheduleTable: Airtable.Table<ScheduleFields>;
@@ -43,6 +43,31 @@ class AirtableService {
   }
 
   // --- Booking Operations ---
+
+  async addBooking(booking: NewBooking): Promise<Booking> {
+    const [customerName, customerEmail, customerPhone] =
+      booking.customerId.split('|');
+
+    const fields = {
+      [F.customerName]: customerName,
+      [F.customerEmail]: customerEmail,
+      [F.customerPhone]: customerPhone,
+      [F.serviceName]: booking.serviceId,
+      [F.date]: booking.startTime.toISOString().split('T')[0],
+      [F.startTime]: booking.startTime.toLocaleTimeString('en-US', {
+        timeZone: 'America/Chicago',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      [F.startTimeISO]: booking.startTime.toISOString(),
+      [F.endTimeISO]: booking.endTime.toISOString(),
+      [F.status]: booking.status,
+      [F.notes]: booking.notes || '',
+    };
+
+    const record = await this.bookingTable.create(fields, { typecast: true });
+    return this.transformBookingRecord(record);
+  }
 
   async createBooking(input: {
     serviceId: string;
@@ -192,11 +217,11 @@ class AirtableService {
   }
 }
 
-let airtableServiceInstance: AirtableService | null = null;
+let airtableServiceInstance: AirtableBookingService | null = null;
 
-function getAirtableService(): AirtableService {
+function getAirtableService(): AirtableBookingService {
   if (!airtableServiceInstance) {
-    airtableServiceInstance = new AirtableService();
+    airtableServiceInstance = new AirtableBookingService();
   }
   return airtableServiceInstance;
 }

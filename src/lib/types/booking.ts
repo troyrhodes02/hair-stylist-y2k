@@ -49,6 +49,8 @@ export interface Booking {
   updatedAt: Date;
 }
 
+export type NewBooking = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>;
+
 export interface NotificationPayload {
   to: string;
   type:

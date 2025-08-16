@@ -166,9 +166,8 @@ const BookingSection = ({
           startTime: selectedTimeSlot?.startTime,
           endTime: selectedTimeSlot?.endTime,
           duration: serviceDuration,
-          customerName,
-          customerEmail,
-          customerPhone,
+          customerId: `${customerName}|${customerEmail}|${customerPhone}`,
+          status: 'pending-payment',
           basePrice: selectedServiceObject?.price || 0,
           addOns: selectedAddOns,
           addOnPrice: selectedAddOns.length
@@ -179,13 +178,33 @@ const BookingSection = ({
         }),
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        const queryParams = new URLSearchParams({
+          bookingId: data.id,
+          customerName: customerName,
+          customerEmail: customerEmail,
+          customerPhone: customerPhone,
+          serviceName: selectedServiceObject?.name || selectedService,
+          bookingDate: new Date(
+            selectedTimeSlot?.startTime || ''
+          ).toLocaleDateString('en-CA'), // Format as YYYY-MM-DD
+          bookingTime: new Date(
+            selectedTimeSlot?.startTime || ''
+          ).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'America/Chicago',
+          }), // Format as HH:MM (24h, Central Time)
+          duration: serviceDuration.toString(),
+          notes: specialRequests,
+        }).toString();
+        window.location.href = `/services/booking-success?${queryParams}`;
+      } else {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create booking');
       }
-
-      // If successful, redirect to success page
-      window.location.href = '/services/booking-success';
     } catch (err) {
       console.error('Error creating booking:', err);
       setError(err instanceof Error ? err.message : 'Failed to create booking');

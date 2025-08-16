@@ -8,27 +8,6 @@ const serverSchema = z.object({
     .min(1, 'CashApp handle must be a non-empty string'),
   DEPOSIT_AMOUNT: z.coerce.number().int().min(1).default(15),
 
-  // Twilio Configuration (Required)
-  TWILIO_ACCOUNT_SID: z
-    .string()
-    .min(1, 'Twilio account SID must be a non-empty string'),
-  TWILIO_AUTH_TOKEN: z
-    .string()
-    .min(1, 'Twilio auth token must be a non-empty string'),
-  TWILIO_PHONE_NUMBER: z
-    .string()
-    .min(1, 'Twilio phone number must be a non-empty string'),
-
-  // Twilio Notification Settings
-  STYLIST_PHONE: z
-    .string()
-    .min(1, 'Stylist phone number must be a non-empty string')
-    .default('+14692236837'),
-  SITE_TZ: z
-    .string()
-    .min(1, 'Site timezone must be a non-empty string')
-    .default('America/Chicago'),
-
   // Airtable Configuration (Required)
   AIRTABLE_ACCESS_TOKEN: z
     .string()

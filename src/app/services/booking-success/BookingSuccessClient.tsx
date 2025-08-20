@@ -9,7 +9,8 @@ import Link from 'next/link';
 import emailjs from '@emailjs/browser';
 
 const AnimatedStars = dynamic(
-  () => import('@/app/components/AnimatedStars/AnimatedStars'),
+  () =>
+    import('@/app/components/AnimatedStars/AnimatedStars').then(m => m.default),
   { ssr: false, loading: () => null }
 );
 

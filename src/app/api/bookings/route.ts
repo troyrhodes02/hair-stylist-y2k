@@ -16,11 +16,11 @@ export async function POST(req: Request) {
       status: body.status,
       paymentId: body.paymentId,
       notes: body.notes,
-      basePrice: body.basePrice,
+      basePrice: Number(body.basePrice),
       addOns: body.addOns,
-      addOnPrice: body.addOnPrice,
-      totalPrice: body.totalPrice,
-      duration: body.duration,
+      addOnPrice: Number(body.addOnPrice),
+      totalPrice: Number(body.totalPrice),
+      duration: Number(body.duration),
     });
 
     return NextResponse.json(result, { status: 201 });

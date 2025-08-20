@@ -130,8 +130,7 @@ export class AirtableBookingService {
       fields[F.duration] = input.duration;
 
       // Set initial payment status
-      fields[F.paymentStatus] =
-        input.status === 'pending-payment' ? 'Pending' : 'Not Required';
+      fields[F.paymentStatus] = 'Pending';
 
       const [record] = await this.bookingTable.create([{ fields }], {
         typecast: true,

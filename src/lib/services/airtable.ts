@@ -38,6 +38,13 @@ const F = {
   totalPrice: 'Total Price',
 } as const;
 
+const TF = {
+  date: 'Date',
+  startTime: 'Start Time',
+  endTime: 'End Time',
+  notes: 'Notes',
+} as const;
+
 export class AirtableBookingService {
   private base: Airtable.Base;
   private bookingTable: Airtable.Table<BookingFields>;
@@ -175,7 +182,7 @@ export class AirtableBookingService {
 
   async getTimeOffForDate(date: Date): Promise<TimeOff[]> {
     const dateStr = date.toISOString().split('T')[0];
-    const formula = `IS_SAME({Date}, '${dateStr}', 'day')`;
+    const formula = `IS_SAME({${TF.date}}, '${dateStr}', 'day')`;
 
     const records = await this.timeOffTable
       .select({ filterByFormula: formula })
@@ -185,10 +192,13 @@ export class AirtableBookingService {
       id: record.id,
       startTime: this.combineDateAndTime(
         dateStr,
-        record.fields['Start'] as string
+        record.fields[TF.startTime] as string
       ),
-      endTime: this.combineDateAndTime(dateStr, record.fields['End'] as string),
-      note: record.fields['Notes'] as string | undefined,
+      endTime: this.combineDateAndTime(
+        dateStr,
+        record.fields[TF.endTime] as string
+      ),
+      note: record.fields[TF.notes] as string | undefined,
     }));
   }
 

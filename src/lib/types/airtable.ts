@@ -32,8 +32,8 @@ export interface ScheduleFields {
 
 export interface TimeOffFields {
   Date: string;
-  Start: string;
-  End: string;
+  'Start Time': string;
+  'End Time': string;
   Notes?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;

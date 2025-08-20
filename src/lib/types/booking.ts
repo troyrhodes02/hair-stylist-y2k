@@ -49,6 +49,13 @@ export interface Booking {
   updatedAt: Date;
 }
 
+export interface TimeOff {
+  id: string;
+  startTime: Date;
+  endTime: Date;
+  note?: string;
+}
+
 export type NewBooking = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>;
 
 export interface NotificationPayload {

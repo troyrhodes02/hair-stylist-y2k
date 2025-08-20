@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Stylist Time Off
+
+The app can block personal time that the stylist is unavailable. In your Airtable base create a table named **`Stylist Time Off`** with the following fields:
+
+| Field   | Type                        | Description                     |
+| ------- | --------------------------- | ------------------------------- |
+| `Date`  | Date                        | Day the stylist is unavailable  |
+| `Start` | Time                        | Beginning of the blocked period |
+| `End`   | Time                        | End of the blocked period       |
+| `Notes` | Single line text (optional) | Reason or comment               |
+
+Set the `AIRTABLE_TIME_OFF_TABLE_ID` environment variable to the ID of this table. Any record added here will prevent bookings during the specified times.

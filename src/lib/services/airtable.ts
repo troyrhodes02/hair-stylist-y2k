@@ -5,8 +5,13 @@ import type {
   WeeklySchedule,
   BookingStatus,
   NewBooking,
+  TimeOff,
 } from '../types/booking';
-import type { BookingFields, ScheduleFields } from '../types/airtable';
+import type {
+  BookingFields,
+  ScheduleFields,
+  TimeOffFields,
+} from '../types/airtable';
 
 // Exact Airtable column names, with env overrides for critical fields
 const F = {
@@ -37,6 +42,7 @@ export class AirtableBookingService {
   private base: Airtable.Base;
   private bookingTable: Airtable.Table<BookingFields>;
   private scheduleTable: Airtable.Table<ScheduleFields>;
+  private timeOffTable: Airtable.Table<TimeOffFields>;
 
   constructor() {
     Airtable.configure({
@@ -45,6 +51,7 @@ export class AirtableBookingService {
     this.base = Airtable.base(env.AIRTABLE_BASE_ID);
     this.bookingTable = this.base(env.AIRTABLE_BOOKING_TABLE_ID);
     this.scheduleTable = this.base(env.AIRTABLE_WEEKLY_SCHEDULE_TABLE_ID);
+    this.timeOffTable = this.base(env.AIRTABLE_TIME_OFF_TABLE_ID);
   }
 
   // --- Booking Operations ---
@@ -164,6 +171,25 @@ export class AirtableBookingService {
     return records
       .map(record => this.transformBookingRecord(record))
       .filter(booking => booking.status === 'confirmed');
+  }
+
+  async getTimeOffForDate(date: Date): Promise<TimeOff[]> {
+    const dateStr = date.toISOString().split('T')[0];
+    const formula = `IS_SAME({Date}, '${dateStr}', 'day')`;
+
+    const records = await this.timeOffTable
+      .select({ filterByFormula: formula })
+      .all();
+
+    return records.map(record => ({
+      id: record.id,
+      startTime: this.combineDateAndTime(
+        dateStr,
+        record.fields['Start'] as string
+      ),
+      endTime: this.combineDateAndTime(dateStr, record.fields['End'] as string),
+      note: record.fields['Notes'] as string | undefined,
+    }));
   }
 
   // --- Schedule Operations ---

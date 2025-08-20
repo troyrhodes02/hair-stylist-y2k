@@ -1,4 +1,9 @@
-import type { TimeSlot, WeeklySchedule, Booking } from '../types/booking';
+import type {
+  TimeSlot,
+  WeeklySchedule,
+  Booking,
+  TimeOff,
+} from '../types/booking';
 import { getAirtableService } from './airtable';
 
 class AvailabilityService {
@@ -7,7 +12,7 @@ class AvailabilityService {
   private generateTimeSlots(
     startTime: Date,
     endTime: Date,
-    existingBookings: Booking[],
+    existingBlocks: Array<{ startTime: Date; endTime: Date }>,
     serviceDuration: number
   ): TimeSlot[] {
     console.log(
@@ -27,11 +32,11 @@ class AvailabilityService {
 
       // Business rule: Appointments can start any time during operating hours
       // Service duration does not limit start times - stylist works until service is complete
-      const hasConflict = existingBookings.some(
-        booking =>
-          (currentTime >= booking.startTime && currentTime < booking.endTime) ||
-          (serviceEnd > booking.startTime && serviceEnd <= booking.endTime) ||
-          (currentTime <= booking.startTime && serviceEnd >= booking.endTime)
+      const hasConflict = existingBlocks.some(
+        block =>
+          (currentTime >= block.startTime && currentTime < block.endTime) ||
+          (serviceEnd > block.startTime && serviceEnd <= block.endTime) ||
+          (currentTime <= block.startTime && serviceEnd >= block.endTime)
       );
 
       slots.push({
@@ -136,13 +141,20 @@ class AvailabilityService {
         `Operating hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
       );
 
-      const confirmedBookings = await airtableService.getBookingsForDate(date);
+      const confirmedBookings: Booking[] =
+        await airtableService.getBookingsForDate(date);
       console.log('Confirmed bookings for the day:', confirmedBookings);
+
+      const timeOffBlocks: TimeOff[] =
+        await airtableService.getTimeOffForDate(date);
+      console.log('Stylist time off for the day:', timeOffBlocks);
+
+      const conflicts = [...confirmedBookings, ...timeOffBlocks];
 
       const slots = this.generateTimeSlots(
         startTime,
         endTime,
-        confirmedBookings,
+        conflicts,
         serviceDuration
       );
       console.log('Generated time slots:', slots);
@@ -159,11 +171,6 @@ class AvailabilityService {
         `Failed to get available slots: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
-  }
-
-  private async getBookingsForDate(date: Date): Promise<Booking[]> {
-    const airtableService = getAirtableService();
-    return airtableService.getBookingsForDate(date);
   }
 
   isValidTimeSlot(slot: TimeSlot, serviceDuration: number): boolean {

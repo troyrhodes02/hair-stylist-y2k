@@ -29,3 +29,12 @@ export interface ScheduleFields {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
+
+export interface TimeOffFields {
+  Date: string;
+  Start: string;
+  End: string;
+  Notes?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}

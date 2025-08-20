@@ -21,6 +21,9 @@ const serverSchema = z.object({
   AIRTABLE_WEEKLY_SCHEDULE_TABLE_ID: z
     .string()
     .min(1, 'Airtable weekly schedule table ID must be a non-empty string'),
+  AIRTABLE_TIME_OFF_TABLE_ID: z
+    .string()
+    .min(1, 'Airtable time off table ID must be a non-empty string'),
 
   // **Required** Airtable Field Names
   // These MUST match the exact names in your Airtable base.

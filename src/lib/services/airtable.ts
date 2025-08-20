@@ -5,8 +5,13 @@ import type {
   WeeklySchedule,
   BookingStatus,
   NewBooking,
+  TimeOff,
 } from '../types/booking';
-import type { BookingFields, ScheduleFields } from '../types/airtable';
+import type {
+  BookingFields,
+  ScheduleFields,
+  TimeOffFields,
+} from '../types/airtable';
 
 // Exact Airtable column names, with env overrides for critical fields
 const F = {
@@ -33,10 +38,18 @@ const F = {
   totalPrice: 'Total Price',
 } as const;
 
+const TF = {
+  date: 'Date',
+  startTime: 'Start Time',
+  endTime: 'End Time',
+  notes: 'Notes',
+} as const;
+
 export class AirtableBookingService {
   private base: Airtable.Base;
   private bookingTable: Airtable.Table<BookingFields>;
   private scheduleTable: Airtable.Table<ScheduleFields>;
+  private timeOffTable: Airtable.Table<TimeOffFields>;
 
   constructor() {
     Airtable.configure({
@@ -45,6 +58,7 @@ export class AirtableBookingService {
     this.base = Airtable.base(env.AIRTABLE_BASE_ID);
     this.bookingTable = this.base(env.AIRTABLE_BOOKING_TABLE_ID);
     this.scheduleTable = this.base(env.AIRTABLE_WEEKLY_SCHEDULE_TABLE_ID);
+    this.timeOffTable = this.base(env.AIRTABLE_TIME_OFF_TABLE_ID);
   }
 
   // --- Booking Operations ---
@@ -166,6 +180,45 @@ export class AirtableBookingService {
       .filter(booking => booking.status === 'confirmed');
   }
 
+  async getTimeOffForDate(date: Date): Promise<TimeOff[]> {
+    const dateStr = date.toISOString().split('T')[0];
+    const formula = `IS_SAME({${TF.date}}, '${dateStr}', 'day')`;
+
+    console.log(`Querying time-off with formula: ${formula}`);
+
+    const records = await this.timeOffTable
+      .select({ filterByFormula: formula })
+      .all();
+
+    console.log(`Found ${records.length} time-off records`);
+
+    return records.map(record => {
+      const startTimeStr = record.fields[TF.startTime] as string;
+      const endTimeStr = record.fields[TF.endTime] as string;
+
+      console.log(`Processing time-off record ${record.id}:`);
+      console.log(`  Raw start time: "${startTimeStr}"`);
+      console.log(`  Raw end time: "${endTimeStr}"`);
+
+      const startTime = this.combineDateAndTime(dateStr, startTimeStr);
+      const endTime = this.combineDateAndTime(dateStr, endTimeStr);
+
+      console.log(
+        `  Parsed start time: ${startTime.toISOString()} (${startTime.toLocaleTimeString()})`
+      );
+      console.log(
+        `  Parsed end time: ${endTime.toISOString()} (${endTime.toLocaleTimeString()})`
+      );
+
+      return {
+        id: record.id,
+        startTime,
+        endTime,
+        note: record.fields[TF.notes] as string | undefined,
+      };
+    });
+  }
+
   // --- Schedule Operations ---
 
   async getWeeklySchedule(): Promise<WeeklySchedule[]> {
@@ -202,28 +255,69 @@ export class AirtableBookingService {
   }
 
   private combineDateAndTime(dateStr?: string, timeStr?: string): Date {
-    if (!dateStr || !timeStr) return new Date();
+    if (!dateStr || !timeStr) {
+      console.log(
+        `combineDateAndTime: Missing params - dateStr: "${dateStr}", timeStr: "${timeStr}"`
+      );
+      return new Date();
+    }
 
+    console.log(
+      `combineDateAndTime: Processing dateStr: "${dateStr}", timeStr: "${timeStr}"`
+    );
     const [hours, minutes] = this.parseTimeString(timeStr);
-    const date = new Date(dateStr);
-    date.setHours(hours, minutes, 0, 0);
+    console.log(
+      `combineDateAndTime: Parsed hours: ${hours}, minutes: ${minutes}`
+    );
+
+    // Fix: Create date in local timezone to avoid date shifts
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day, hours, minutes, 0, 0);
+
+    console.log(
+      `combineDateAndTime: Final result: ${date.toISOString()} (${date.toLocaleTimeString()})`
+    );
+    console.log(
+      `combineDateAndTime: Date components - Year: ${year}, Month: ${month - 1}, Day: ${day}`
+    );
     return date;
   }
 
   private parseTimeString(timeStr: string): [number, number] {
+    console.log(`parseTimeString: Parsing "${timeStr}"`);
+
+    // Try parsing as ISO date first
     const iso = new Date(timeStr);
     if (!isNaN(iso.getTime())) {
+      console.log(
+        `parseTimeString: Parsed as ISO date - hours: ${iso.getHours()}, minutes: ${iso.getMinutes()}`
+      );
       return [iso.getHours(), iso.getMinutes()];
     }
-    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+
+    // Try parsing as AM/PM format
+    const match = timeStr.trim().match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
     if (!match) {
+      console.log(
+        `parseTimeString: No match found for "${timeStr}", returning [0, 0]`
+      );
       return [0, 0];
     }
+
     let hours = parseInt(match[1], 10);
-    const minutes = parseInt(match[2], 10);
+    const minutes = match[2] ? parseInt(match[2], 10) : 0;
     const period = match[3].toUpperCase();
+
+    console.log(
+      `parseTimeString: Matched - raw hours: ${hours}, minutes: ${minutes}, period: ${period}`
+    );
+
     if (period === 'PM' && hours !== 12) hours += 12;
     if (period === 'AM' && hours === 12) hours = 0;
+
+    console.log(
+      `parseTimeString: Final result - hours: ${hours}, minutes: ${minutes}`
+    );
     return [hours, minutes];
   }
 

@@ -1,4 +1,9 @@
-import type { TimeSlot, WeeklySchedule, Booking } from '../types/booking';
+import type {
+  TimeSlot,
+  WeeklySchedule,
+  Booking,
+  TimeOff,
+} from '../types/booking';
 import { getAirtableService } from './airtable';
 
 class AvailabilityService {
@@ -7,7 +12,7 @@ class AvailabilityService {
   private generateTimeSlots(
     startTime: Date,
     endTime: Date,
-    existingBookings: Booking[],
+    existingBlocks: Array<{ startTime: Date; endTime: Date }>,
     serviceDuration: number
   ): TimeSlot[] {
     console.log(
@@ -27,12 +32,33 @@ class AvailabilityService {
 
       // Business rule: Appointments can start any time during operating hours
       // Service duration does not limit start times - stylist works until service is complete
-      const hasConflict = existingBookings.some(
-        booking =>
-          (currentTime >= booking.startTime && currentTime < booking.endTime) ||
-          (serviceEnd > booking.startTime && serviceEnd <= booking.endTime) ||
-          (currentTime <= booking.startTime && serviceEnd >= booking.endTime)
-      );
+      const hasConflict = existingBlocks.some(block => {
+        // Slot starts within blocked time (including exactly at end time)
+        const conflict1 =
+          currentTime >= block.startTime && currentTime <= block.endTime;
+        // Service would end within blocked time
+        const conflict2 =
+          serviceEnd > block.startTime && serviceEnd <= block.endTime;
+        // Slot completely envelops the blocked time
+        const conflict3 =
+          currentTime < block.startTime && serviceEnd > block.endTime;
+        const hasConflict = conflict1 || conflict2 || conflict3;
+
+        if (hasConflict) {
+          console.log(`    CONFLICT DETECTED with block:`);
+          console.log(
+            `      Block: ${block.startTime.toLocaleTimeString()} - ${block.endTime.toLocaleTimeString()}`
+          );
+          console.log(
+            `      Slot: ${currentTime.toLocaleTimeString()} - ${serviceEnd.toLocaleTimeString()}`
+          );
+          console.log(
+            `      Conflict reasons: slotStartsInBlock=${conflict1}, serviceEndsInBlock=${conflict2}, slotEnvelopsBlock=${conflict3}`
+          );
+        }
+
+        return hasConflict;
+      });
 
       slots.push({
         startTime: new Date(currentTime),
@@ -62,15 +88,15 @@ class AvailabilityService {
       return [hours, minutes];
     }
 
-    // Fallback for "h:mm A" format
-    const time = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    // Fallback for 12-hour text like "h:mm AM" or "h AM"
+    const time = timeStr.trim().match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
     if (!time) {
       console.error(`Invalid time format for: "${timeStr}"`);
       return [0, 0];
     }
 
     let hours = parseInt(time[1], 10);
-    const minutes = parseInt(time[2], 10);
+    const minutes = time[2] ? parseInt(time[2], 10) : 0;
     const period = time[3].toUpperCase();
 
     if (period === 'PM' && hours !== 12) {
@@ -136,13 +162,42 @@ class AvailabilityService {
         `Operating hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
       );
 
-      const confirmedBookings = await airtableService.getBookingsForDate(date);
+      const confirmedBookings: Booking[] =
+        await airtableService.getBookingsForDate(date);
       console.log('Confirmed bookings for the day:', confirmedBookings);
+
+      const timeOffBlocks: TimeOff[] =
+        await airtableService.getTimeOffForDate(date);
+      console.log('Stylist time off for the day:', timeOffBlocks);
+
+      // Enhanced debugging for time-off blocks
+      if (timeOffBlocks.length > 0) {
+        console.log('=== TIME OFF BLOCKS DEBUG ===');
+        timeOffBlocks.forEach((block, index) => {
+          console.log(`Block ${index + 1}:`);
+          console.log(`  ID: ${block.id}`);
+          console.log(
+            `  Start Time: ${block.startTime.toISOString()} (${block.startTime.toLocaleTimeString()})`
+          );
+          console.log(
+            `  End Time: ${block.endTime.toISOString()} (${block.endTime.toLocaleTimeString()})`
+          );
+          console.log(`  Note: ${block.note || 'No note'}`);
+          console.log(
+            `  Date object validity: Start=${!isNaN(block.startTime.getTime())}, End=${!isNaN(block.endTime.getTime())}`
+          );
+        });
+        console.log('=== END TIME OFF BLOCKS DEBUG ===');
+      } else {
+        console.log('No time-off blocks found for this date');
+      }
+
+      const conflicts = [...confirmedBookings, ...timeOffBlocks];
 
       const slots = this.generateTimeSlots(
         startTime,
         endTime,
-        confirmedBookings,
+        conflicts,
         serviceDuration
       );
       console.log('Generated time slots:', slots);
@@ -159,11 +214,6 @@ class AvailabilityService {
         `Failed to get available slots: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
-  }
-
-  private async getBookingsForDate(date: Date): Promise<Booking[]> {
-    const airtableService = getAirtableService();
-    return airtableService.getBookingsForDate(date);
   }
 
   isValidTimeSlot(slot: TimeSlot, serviceDuration: number): boolean {

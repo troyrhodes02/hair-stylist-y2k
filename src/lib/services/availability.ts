@@ -32,12 +32,33 @@ class AvailabilityService {
 
       // Business rule: Appointments can start any time during operating hours
       // Service duration does not limit start times - stylist works until service is complete
-      const hasConflict = existingBlocks.some(
-        block =>
-          (currentTime >= block.startTime && currentTime < block.endTime) ||
-          (serviceEnd > block.startTime && serviceEnd <= block.endTime) ||
-          (currentTime <= block.startTime && serviceEnd >= block.endTime)
-      );
+      const hasConflict = existingBlocks.some(block => {
+        // Slot starts within blocked time (including exactly at end time)
+        const conflict1 =
+          currentTime >= block.startTime && currentTime <= block.endTime;
+        // Service would end within blocked time
+        const conflict2 =
+          serviceEnd > block.startTime && serviceEnd <= block.endTime;
+        // Slot completely envelops the blocked time
+        const conflict3 =
+          currentTime < block.startTime && serviceEnd > block.endTime;
+        const hasConflict = conflict1 || conflict2 || conflict3;
+
+        if (hasConflict) {
+          console.log(`    CONFLICT DETECTED with block:`);
+          console.log(
+            `      Block: ${block.startTime.toLocaleTimeString()} - ${block.endTime.toLocaleTimeString()}`
+          );
+          console.log(
+            `      Slot: ${currentTime.toLocaleTimeString()} - ${serviceEnd.toLocaleTimeString()}`
+          );
+          console.log(
+            `      Conflict reasons: slotStartsInBlock=${conflict1}, serviceEndsInBlock=${conflict2}, slotEnvelopsBlock=${conflict3}`
+          );
+        }
+
+        return hasConflict;
+      });
 
       slots.push({
         startTime: new Date(currentTime),
@@ -148,6 +169,28 @@ class AvailabilityService {
       const timeOffBlocks: TimeOff[] =
         await airtableService.getTimeOffForDate(date);
       console.log('Stylist time off for the day:', timeOffBlocks);
+
+      // Enhanced debugging for time-off blocks
+      if (timeOffBlocks.length > 0) {
+        console.log('=== TIME OFF BLOCKS DEBUG ===');
+        timeOffBlocks.forEach((block, index) => {
+          console.log(`Block ${index + 1}:`);
+          console.log(`  ID: ${block.id}`);
+          console.log(
+            `  Start Time: ${block.startTime.toISOString()} (${block.startTime.toLocaleTimeString()})`
+          );
+          console.log(
+            `  End Time: ${block.endTime.toISOString()} (${block.endTime.toLocaleTimeString()})`
+          );
+          console.log(`  Note: ${block.note || 'No note'}`);
+          console.log(
+            `  Date object validity: Start=${!isNaN(block.startTime.getTime())}, End=${!isNaN(block.endTime.getTime())}`
+          );
+        });
+        console.log('=== END TIME OFF BLOCKS DEBUG ===');
+      } else {
+        console.log('No time-off blocks found for this date');
+      }
 
       const conflicts = [...confirmedBookings, ...timeOffBlocks];
 

@@ -26,6 +26,7 @@ export default function BookingSuccessClient() {
 
       const bookingId = searchParams.get('bookingId');
       if (bookingId && !localStorage.getItem(bookingId)) {
+        localStorage.setItem(bookingId, 'true');
         try {
           await emailjs.send(
             process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
@@ -33,7 +34,6 @@ export default function BookingSuccessClient() {
             bookingData,
             process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
           );
-          localStorage.setItem(bookingId, 'true');
         } catch (error) {
           console.error('Failed to send email:', error);
         }

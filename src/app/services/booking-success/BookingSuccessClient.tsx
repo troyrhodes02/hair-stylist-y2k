@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography, Button } from '@mui/material';
 import dynamic from 'next/dynamic';
@@ -17,9 +17,18 @@ const AnimatedStars = dynamic(
 );
 
 export default function BookingSuccessClient() {
+  const [isMounted, setIsMounted] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
     const sendEmail = async () => {
       const bookingData = {
         customer_name: searchParams.get('customerName') || '',
@@ -49,7 +58,11 @@ export default function BookingSuccessClient() {
     };
 
     sendEmail();
-  }, [searchParams]);
+  }, [searchParams, isMounted]);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <Box

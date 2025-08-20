@@ -3,10 +3,15 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography, Button } from '@mui/material';
-import { AnimatedStars } from '@/app/components/AnimatedStars/AnimatedStars';
+import dynamic from 'next/dynamic';
 import theme from '@/styles/theme';
 import Link from 'next/link';
 import emailjs from '@emailjs/browser';
+
+const AnimatedStars = dynamic(
+  () => import('@/app/components/AnimatedStars/AnimatedStars'),
+  { ssr: false, loading: () => null }
+);
 
 export default function BookingSuccessClient() {
   const searchParams = useSearchParams();

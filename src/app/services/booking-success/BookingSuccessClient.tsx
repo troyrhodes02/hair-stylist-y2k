@@ -1,17 +1,34 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography, Button } from '@mui/material';
-import { AnimatedStars } from '@/app/components/AnimatedStars/AnimatedStars';
+import dynamic from 'next/dynamic';
 import theme from '@/styles/theme';
 import Link from 'next/link';
 import emailjs from '@emailjs/browser';
 
+const AnimatedStars = dynamic(
+  () =>
+    import('@/app/components/AnimatedStars/AnimatedStars').then(
+      mod => mod.AnimatedStars
+    ),
+  { ssr: false, loading: () => null }
+);
+
 export default function BookingSuccessClient() {
+  const [isMounted, setIsMounted] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
     const sendEmail = async () => {
       const bookingData = {
         customer_name: searchParams.get('customerName') || '',
@@ -26,6 +43,7 @@ export default function BookingSuccessClient() {
 
       const bookingId = searchParams.get('bookingId');
       if (bookingId && !localStorage.getItem(bookingId)) {
+        localStorage.setItem(bookingId, 'true');
         try {
           await emailjs.send(
             process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
@@ -33,7 +51,6 @@ export default function BookingSuccessClient() {
             bookingData,
             process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
           );
-          localStorage.setItem(bookingId, 'true');
         } catch (error) {
           console.error('Failed to send email:', error);
         }
@@ -41,7 +58,11 @@ export default function BookingSuccessClient() {
     };
 
     sendEmail();
-  }, [searchParams]);
+  }, [searchParams, isMounted]);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <Box

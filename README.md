@@ -39,13 +39,15 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 The app can block personal time that the stylist is unavailable. In your Airtable base create a table named **`Stylist Time Off`** with the following fields:
 
-| Field        | Type                        | Description                                      |
-| ------------ | --------------------------- | ------------------------------------------------ |
-| `Date`       | Date                        | Day the stylist is unavailable                   |
-| `Start Time` | Single line text            | Beginning of the blocked period (e.g. "1:30 PM") |
-| `End Time`   | Single line text            | End of the blocked period (e.g. "3:00 PM")       |
-| `Notes`      | Single line text (optional) | Reason or comment                                |
+| Field        | Type                        | Description                                       |
+| ------------ | --------------------------- | ------------------------------------------------- |
+| `Date`       | Date                        | Day the stylist is unavailable                    |
+| `Start Time` | Single line text            | Beginning of the blocked period (e.g. "10:00 AM") |
+| `End Time`   | Single line text            | End of the blocked period (e.g. "5:00 PM")        |
+| `Notes`      | Single line text (optional) | Reason or comment                                 |
 
 It's fine to use the `Date` field as the table's primary column.
+
+Enter times in 12-hour format using AM/PM.
 
 Set the `AIRTABLE_TIME_OFF_TABLE_ID` environment variable to the ID of this table. Any record added here will prevent bookings during the specified times.

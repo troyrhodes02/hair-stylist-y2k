@@ -67,15 +67,15 @@ class AvailabilityService {
       return [hours, minutes];
     }
 
-    // Fallback for "h:mm A" format
-    const time = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    // Fallback for 12-hour text like "h:mm AM" or "h AM"
+    const time = timeStr.trim().match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
     if (!time) {
       console.error(`Invalid time format for: "${timeStr}"`);
       return [0, 0];
     }
 
     let hours = parseInt(time[1], 10);
-    const minutes = parseInt(time[2], 10);
+    const minutes = time[2] ? parseInt(time[2], 10) : 0;
     const period = time[3].toUpperCase();
 
     if (period === 'PM' && hours !== 12) {

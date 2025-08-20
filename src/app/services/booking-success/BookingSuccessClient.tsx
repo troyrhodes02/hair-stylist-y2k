@@ -10,7 +10,9 @@ import emailjs from '@emailjs/browser';
 
 const AnimatedStars = dynamic(
   () =>
-    import('@/app/components/AnimatedStars/AnimatedStars').then(m => m.default),
+    import('@/app/components/AnimatedStars/AnimatedStars').then(
+      mod => mod.AnimatedStars
+    ),
   { ssr: false, loading: () => null }
 );
 

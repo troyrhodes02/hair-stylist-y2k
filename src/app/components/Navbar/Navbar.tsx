@@ -21,6 +21,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 const glow = keyframes`
   0%, 100% { text-shadow: 0 0 10px rgba(255, 20, 147, 0.4); }
@@ -120,6 +121,8 @@ const navItems = [
 export const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   const trigger = useScrollTrigger({
     // It will default to window, which is what we want.
@@ -134,11 +137,40 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Handle scrolling to section after navigation
+  useEffect(() => {
+    if (pathname === '/' && window.location.hash) {
+      const hash = window.location.hash;
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          const navbarHeight = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition =
+            elementPosition + window.pageYOffset - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
+    }
+  }, [pathname]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(prevState => !prevState);
   };
 
   const scrollToSection = (href: string) => {
+    // If we're on the services page, navigate to home first
+    if (pathname !== '/') {
+      router.push(`/${href}`);
+      setMobileOpen(false);
+      return;
+    }
+
+    // If we're on the home page, scroll to the section
     const element = document.querySelector(href);
     if (element) {
       const navbarHeight = 80; // Height of navbar
@@ -220,7 +252,9 @@ export const Navbar = () => {
                 zIndex: 2,
               }}
             >
-              <Logo>Kel.C</Logo>
+              <Link href='/' passHref style={{ textDecoration: 'none' }}>
+                <Logo>Kel.C</Logo>
+              </Link>
 
               {/* Desktop Navigation */}
               <Box

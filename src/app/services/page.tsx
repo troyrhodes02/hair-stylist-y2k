@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { AnimatedStars } from '@/app/components/AnimatedStars/AnimatedStars';
+import { Navbar } from '@/app/components';
 import ServicesSection from './components/ServicesSection';
 import BookingSection from './components/BookingSection';
 import theme from '@/styles/theme';
@@ -120,6 +121,7 @@ const ServicesPage = () => {
         color: theme.palette.y2k.foreground,
       }}
     >
+      <Navbar />
       <AnimatedStars />
 
       <Container

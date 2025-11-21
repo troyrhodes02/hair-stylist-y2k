@@ -1,4 +1,5 @@
 export { HeroSection } from './landing/HeroSection';
+export { HolidaySale } from './landing/HolidaySale';
 export { MeetYourStylist } from './landing/MeetYourStylist';
 export { PortfolioSection } from './landing/PortfolioSection';
 export { ReviewsSection } from './landing/ReviewsSection';

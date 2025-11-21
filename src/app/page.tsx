@@ -3,6 +3,7 @@
 import { type NextPage } from 'next';
 import {
   HeroSection,
+  HolidaySale,
   MeetYourStylist,
   PortfolioSection,
   ReviewsSection,
@@ -91,6 +92,7 @@ const Home: NextPage = () => {
         <Box id='hero'>
           <HeroSection />
         </Box>
+        <HolidaySale />
         <Box id='about'>
           <MeetYourStylist />
         </Box>
